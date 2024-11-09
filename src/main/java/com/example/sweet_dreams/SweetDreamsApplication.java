@@ -6,8 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class SweetDreamsApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SweetDreamsApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SweetDreamsApplication.class, args);
+    }
+
+    //// Скидки и акции
 
 }

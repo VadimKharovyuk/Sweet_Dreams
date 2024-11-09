@@ -1,10 +1,591 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sweet Dreams - Магазин тортов на заказ">
+    <meta name="keywords" content="торты, заказать торт, свадебные торты, детские торты">
+    <meta property="og:title" content="Sweet Dreams - Магазин тортов">
+    <meta property="og:description" content="Магазин тортов на заказ">
+    <meta property="og:image" content="path-to-your-logo.jpg">
+    <title>Sweet Dreams - Магазин тортов</title>
+    <style>
+        :root {
+            --primary-color: #40E0D0;      /* Бирюзовый */
+            --primary-light: #7FFFD4;      /* Светло-бирюзовый */
+            --primary-dark: #20B2AA;       /* Темно-бирюзовый */
+            --white: #FFFFFF;              /* Белый */
+            --gray-light: #F5F5F5;         /* Светло-серый */
+            --gray: #E0E0E0;               /* Серый */
+            --text-color: #333333;         /* Текст */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* Навигация */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background-color: var(--white);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+            background-color: var(--gray-light);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .search-input {
+            padding: 0.5rem;
+            border: 2px solid var(--gray);
+            border-radius: 20px;
+            width: 200px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            width: 250px;
+        }
+
+        .cart-icon {
+            position: relative;
+            color: var(--primary-dark);
+            text-decoration: none;
+            font-size: 1.2rem;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        /* Видео секция */
+        .video-section {
+            margin-top: 70px;
+            width: 100%;
+            height: 700px;
+            position: relative;
+            overflow: hidden;
+            background-color: var(--gray-light);
+        }
+
+        .video-section video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Категории */
+        .categories {
+            padding: 4rem 5%;
+            background-color: var(--gray-light);
+        }
+
+        .categories h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--text-color);
+            font-size: 2rem;
+        }
+
+        .categories-container {
+            position: relative;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .categories-grid {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 2rem;
+            padding: 1rem 0;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .categories-grid::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-card {
+            flex: 0 0 300px;
+            background-color: var(--white);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .category-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .category-content {
+            padding: 1.5rem;
+        }
+
+        .category-title {
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .category-content p {
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .category-price {
+            color: var(--primary-dark);
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .scroll-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--white);
+            border: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            cursor: pointer;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .scroll-button:hover {
+            background-color: var(--primary-light);
+        }
+
+        .scroll-left {
+            left: 10px;
+        }
+
+        .scroll-right {
+            right: 10px;
+        }
+
+        /* Полноэкранное фото с текстом */
+        .full-width-image {
+            width: 100%;
+            height: 500px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden; /* Чтобы изображение не выходило за пределы секции */
+        }
+
+        .background-img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Чтобы изображение заполняло всю секцию */
+            z-index: 1;
+        }
+
+        /* Затемнение через псевдоэлемент */
+        .full-width-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2;
+        }
+
+        .full-width-content {
+            position: relative;
+            text-align: center;
+            color: var(--white);
+            padding: 2rem;
+            max-width: 800px;
+            z-index: 3; /* Чтобы текст был поверх изображения и затемнения */
+        }
+
+        .full-width-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .full-width-content p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background-color: var(--primary-color);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+
+
+
+        .about-section {
+            width: 100%;
+            padding: 4rem 5%;
+            background-color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 4rem;
+        }
+
+        .about-image {
+            flex: 1;
+            height: 600px;
+        }
+
+        .about-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .about-content {
+            flex: 1;
+            padding: 2rem;
+        }
+
+        .about-content h2 {
+            color: var(--primary-dark);
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .about-content p {
+            color: var(--text-color);
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .about-features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-dark);
+            font-size: 1.2rem;
+        }
+
+        .feature-text {
+            font-size: 1rem;
+            color: var(--text-color);
+        }
+        /* Футер */
+        .footer {
+            background-color: var(--primary-dark);
+            color: var(--white);
+            padding: 4rem 5%;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 1.5rem;
+            color: var(--white);
+        }
+
+        .footer-column p,
+        .footer-column a {
+            color: var(--gray-light);
+            text-decoration: none;
+            margin-bottom: 0.5rem;
+            display: block;
+            transition: color 0.3s ease;
+        }
+
+        .footer-column a:hover {
+            color: var(--primary-light);
+        }
+
+
+    </style>
 </head>
 <body>
-$END$
+<!-- Навигация -->
+<nav class="navbar">
+    <div class="nav-left">
+        <a href="/" class="logo">Sweet Dreams</a>
+        <div class="nav-links">
+            <a href="/categories" class="nav-link">Категорії</a>
+            <a href="/products" class="nav-link">Продукти</a>
+        </div>
+    </div>
+    <div class="nav-right">
+        <form class="search-form">
+            <input type="hidden" name="_csrf" value="${_csrf.token}">
+            <input type="search" class="search-input" placeholder="Пошук тортів...">
+        </form>
+        <a href="/cart" class="cart-icon" aria-label="Кошик">
+            🛒
+            <span class="cart-count">0</span>
+        </a>
+    </div>
+</nav>
+
+<!-- Видео секция -->
+    <section class="video-section">
+        <video autoplay loop muted>
+            <source src="/3326573-hd_1920_1080_24fps.mp4" type="video/mp4">
+
+        </video>
+    </section>
+
+
+<!-- Категории -->
+<section class="categories">
+    <h2>Наші торти</h2>
+    <div class="categories-container">
+        <button class="scroll-button scroll-left" aria-label="Прокрутить влево">←</button>
+        <button class="scroll-button scroll-right" aria-label="Прокрутить вправо">→</button>
+
+        <div class="categories-grid">
+            <!-- Карточка 1 -->
+            <div class="category-card">
+                <img src="/pic/test1.jpeg" alt="Весільні торти" class="category-image">
+                <div class="category-content">
+                    <h3 class="category-title">Весільні торти</h3>
+                    <p>Особливі торти для особливого дня</p>
+                    <span class="category-price">від 3000 UAH</span>
+                </div>
+            </div>
+
+            <!-- Карточка 2 -->
+            <div class="category-card">
+                <img src="/pic/test2.webp" alt="Дитячі торти" class="category-image">
+                <div class="category-content">
+                    <h3 class="category-title">Дитячі торти</h3>
+                    <p>Яскраві торти для свята</p>
+                    <span class="category-price">від 2500 UAH</span>
+                </div>
+            </div>
+
+            <!-- Карточка 3 -->
+            <div class="category-card">
+                <img src="/pic/test3.jpeg" alt="Класичні торти" class="category-image">
+                <div class="category-content">
+                    <h3 class="category-title">Класичні торти</h3>
+                    <p>Традиційні рецепти</p>
+                    <span class="category-price">від 2000 UAH</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="about-section">
+    <div class="about-image">
+        <img th:src="@{/pic/pexels-photo-1036621.webp}" alt="Наш шеф-кондитер за роботою">
+    </div>
+
+    <div class="about-content">
+        <h2>Чому обирають нас</h2>
+        <p>Sweet Dreams - це не просто кондитерська, це місце, де створюються шедеври. Кожен торт - це витвір мистецтва, створений з любов'ю та увагою до деталей.</p>
+        <p>Ми використовуємо тільки натуральні інгредієнти найвищої якості та сучасне обладнання, щоб ваш десерт був не тільки красивим, але й неймовірно смачним.</p>
+
+        <div class="about-features">
+            <div class="feature-item">
+                <div class="feature-icon">🎂</div>
+                <span class="feature-text">Індивідуальний дизайн</span>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🌿</div>
+                <span class="feature-text">Натуральні інгредієнти</span>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">⭐</div>
+                <span class="feature-text">Досвідчені кондитери</span>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🚚</div>
+                <span class="feature-text">Швидка доставка</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="full-width-image" role="img" aria-label="Декоративне зображення">
+    <img th:src="@{/pic/pexels-photo-1702373.webp}" alt="Гарний торт" class="background-img">
+    <div class="full-width-content">
+        <h2>Створюємо солодкі моменти</h2>
+        <p>Кожен торт - це історія, розказана через смак і дизайн. Довірте нам створення вашого ідеального десерту для будь-якої особливої події.</p>
+        <a href="#" class="cta-button">Замовити торт</a>
+    </div>
+</section>
+
+<!-- Футер -->
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-column">
+            <h3>Адреса</h3>
+            <p>вул. Шевченка, буд. 10</p>
+            <p>Київ, 01001</p>
+            <p>Україна</p>
+        </div>
+        <div class="footer-column">
+            <h3>Контакти</h3>
+            <p>Тел: +380 (99) 123-45-67</p>
+            <p>Email: info@sweetdreams.ua</p>
+            <p>Години роботи: 9:00 - 21:00</p>
+        </div>
+        <div class="footer-column">
+            <h3>Про нас</h3>
+            <a href="/about">Про компанію</a>
+            <a href="/delivery">Доставка</a>
+            <a href="/faq">FAQ</a>
+        </div>
+    </div>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const scrollContainer = document.querySelector('.categories-grid');
+        const scrollLeftBtn = document.querySelector('.scroll-left');
+        const scrollRightBtn = document.querySelector('.scroll-right');
+        const scrollAmount = 300;
+
+        scrollLeftBtn.addEventListener('click', () => {
+            scrollContainer.scrollBy({
+                left: -scrollAmount,
+                behavior: 'smooth'
+            });
+        });
+
+        scrollRightBtn.addEventListener('click', () => {
+            scrollContainer.scrollBy({
+                left: scrollAmount,
+                behavior: 'smooth'
+            });
+        });
+
+        scrollContainer.addEventListener('scroll', () => {
+            scrollLeftBtn.style.display =
+                scrollContainer.scrollLeft > 0 ? 'flex' : 'none';
+
+            scrollRightBtn.style.display =
+                scrollContainer.scrollLeft < (scrollContainer.scrollWidth - scrollContainer.clientWidth)
+                    ? 'flex' : 'none';
+        });
+
+        scrollLeftBtn.style.display = 'none';
+    });
+</script>
 </body>
 </html>
