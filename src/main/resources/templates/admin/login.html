@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Вход в систему</title>
+  <style>
+    :root {
+      --primary-color: #40E0D0;
+      --primary-dark: #20B2AA;
+      --white: #FFFFFF;
+      --gray-light: #F5F5F5;
+      --error-color: #FF4444;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: var(--gray-light);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .login-container {
+      background-color: var(--white);
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h1 {
+      color: var(--primary-dark);
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #333;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+
+    .error-message {
+      color: var(--error-color);
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .success-message {
+      color: #28a745;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 1rem;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: var(--primary-dark);
+    }
+  </style>
+</head>
+<body>
+<div class="login-container">
+  <h1>Вход в систему</h1>
+
+  <!-- Сообщение об ошибке -->
+  <div th:if="${error}" class="error-message" th:text="${error}"></div>
+
+  <!-- Сообщение об успешной регистрации -->
+  <div th:if="${param.registered}" class="success-message">
+    Регистрация успешна. Войдите в систему.
+  </div>
+
+  <form th:action="@{/admin/login}" method="post">
+    <div class="form-group">
+      <label for="username">Имя пользователя:</label>
+      <input type="text"
+             id="username"
+             name="username"
+             required
+             autofocus>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Пароль:</label>
+      <input type="password"
+             id="password"
+             name="password"
+             required>
+    </div>
+
+    <button type="submit">Войти</button>
+  </form>
+</div>
+</body>
+</html>

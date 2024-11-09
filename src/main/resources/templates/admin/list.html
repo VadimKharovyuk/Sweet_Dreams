@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Список администраторов</title>
+  <style>
+    /* Аналогичные стили + стили для таблицы */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    tr:hover {
+      background-color: var(--gray-light);
+    }
+  </style>
+</head>
+<body>
+<div class="list-container">
+  <h1>Список администраторов</h1>
+
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Имя пользователя</th>
+      <th>Email</th>
+      <th>Роль</th>
+      <th>Статус</th>
+      <th>Дата создания</th>
+      <th>Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="admin : ${admins}">
+      <td th:text="${admin.id}"></td>
+      <td th:text="${admin.username}"></td>
+      <td th:text="${admin.email}"></td>
+      <td th:text="${admin.role}"></td>
+      <td th:text="${admin.active ? 'Активен' : 'Неактивен'}"></td>
+      <td th:text="${#temporals.format(admin.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
+      <td>
+        <a th:href="@{/admin/edit/{id}(id=${admin.id})}">Редактировать</a>
+        <a th:href="@{/admin/delete/{id}(id=${admin.id})}"
+           onclick="return confirm('Вы уверены?')">Удалить</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <a href="/admin/register" class="btn">Добавить администратора</a>
+</div>
+</body>
+</html>

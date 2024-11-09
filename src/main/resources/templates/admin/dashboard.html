@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Панель управления</title>
+  <style>
+    /* Используйте те же стили root */
+
+    .dashboard-container {
+      padding: 2rem;
+    }
+
+    .welcome-message {
+      margin-bottom: 2rem;
+    }
+
+    .admin-menu {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .menu-item {
+      padding: 1rem;
+      background-color: var(--white);
+      border-radius: 5px;
+      text-align: center;
+      text-decoration: none;
+      color: var(--primary-dark);
+      transition: all 0.3s;
+    }
+
+    .menu-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .logout-form {
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+<div class="dashboard-container">
+  <h1>Панель управления</h1>
+
+  <div class="welcome-message">
+    Добро пожаловать, <span th:text="${adminUsername}"></span>!
+  </div>
+
+  <div class="admin-menu">
+    <a href="/admin/products" class="menu-item">Управление товарами</a>
+    <a href="/admin/orders" class="menu-item">Заказы</a>
+    <a href="/admin/categories" class="menu-item">Категории</a>
+    <a href="/admin/list" class="menu-item">Администраторы</a>
+  </div>
+
+  <form class="logout-form" th:action="@{/admin/logout}" method="post">
+    <button type="submit">Выйти</button>
+  </form>
+</div>
+</body>
+</html>

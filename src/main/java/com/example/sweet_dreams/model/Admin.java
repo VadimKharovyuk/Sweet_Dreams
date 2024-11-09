@@ -20,6 +20,9 @@ public class Admin {
     private String password;
 
     @Column(nullable = false)
+    private String salt;
+
+    @Column(nullable = false)
     private String email;
 
     @Enumerated(EnumType.STRING)
