@@ -1,10 +1,7 @@
 package com.example.sweet_dreams.dto.product;
 
 import com.example.sweet_dreams.model.Product;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -36,7 +33,7 @@ public class ProductCreateDto {
     @PositiveOrZero(message = "Вес должен быть положительным")
     private Double weight;
 
-    private Set<String> ingredients;
+//    private Set<String> ingredients;
 
     private boolean custom;
 
@@ -48,5 +45,15 @@ public class ProductCreateDto {
     @PositiveOrZero(message = "Минимальное время заказа должно быть положительным")
     private Integer minimumOrderTimeHours;
 
+    @NotEmpty(message = "Необходимо указать хотя бы одну цену для размера")
     private Map<Product.CakeSize, BigDecimal> sizePrices;
+
+    @AssertTrue(message = "Все цены должны быть положительными")
+    public boolean isSizePricesValid() {
+        if (sizePrices == null || sizePrices.isEmpty()) {
+            return false;
+        }
+        return sizePrices.values().stream()
+                .allMatch(price -> price != null && price.compareTo(BigDecimal.ZERO) > 0);
+    }
 }

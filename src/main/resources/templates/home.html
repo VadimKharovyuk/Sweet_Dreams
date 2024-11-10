@@ -612,8 +612,8 @@
         </div>
 
         <div class="categories-container">
-            <button class="scroll-button scroll-left" aria-label="Прокрутить влево">←</button>
-            <button class="scroll-right scroll-right" aria-label="Прокрутить вправо">→</button>
+<!--            <button class="scroll-button scroll-left" aria-label="Прокрутить влево">←</button>-->
+<!--            <button class="scroll-right scroll-right" aria-label="Прокрутить вправо">→</button>-->
 
             <div class="categories-grid">
                 <div class="category-card" th:each="product : ${category.products}">
@@ -623,7 +623,7 @@
                          th:alt="${product.name}">
                     <div class="category-content">
                         <h3 class="category-title" th:text="${product.name}"></h3>
-<!--                        <p th:text="${product.get}"></p>-->
+
                         <span class="category-price"
                               th:text="'від ' + ${#numbers.formatDecimal(product.price, 1, 2)} + ' UAH'">
                         </span>

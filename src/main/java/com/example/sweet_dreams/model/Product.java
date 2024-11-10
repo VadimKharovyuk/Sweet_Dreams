@@ -114,19 +114,24 @@ public class Product {
         updatedAt = LocalDateTime.now();
     }
     public enum CakeSize {
-        SMALL(1.0),    // 1 кг
-        MEDIUM(2.0),   // 2 кг
-        LARGE(3.0),    // 3 кг
-        EXTRA(5.0);    // 5 кг
+        SMALL(14),    // 14 см
+        MEDIUM(18),   // 18 см
+        LARGE(22),    // 22 см
+        EXTRA(26);    // 26 см
 
-        private final double weight;
+        private final int diameter;
 
-        CakeSize(double weight) {
-            this.weight = weight;
+        CakeSize(int diameter) {
+            this.diameter = diameter;
         }
 
-        public double getWeight() {
-            return weight;
+        public int getDiameter() {
+            return diameter;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%d см", diameter);
         }
     }
 }

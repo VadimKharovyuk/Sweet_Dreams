@@ -54,9 +54,14 @@ public class AdminProductController {
         log.info("Получен запрос на создание продукта: {}", productCreateDto);
 
         if (result.hasErrors()) {
+            if (productCreateDto.getSizePrices() == null || productCreateDto.getSizePrices().isEmpty()) {
+                result.rejectValue("sizePrices", "error.sizePrices",
+                        "Необходимо указать хотя бы одну цену для размера");
+            }
             log.error("Ошибки валидации: {}", result.getAllErrors());
             model.addAttribute("categories", categoryService.getAllCategories());
             model.addAttribute("cakeSizes", Product.CakeSize.values());
+
             return "admin/products/create";
         }
 

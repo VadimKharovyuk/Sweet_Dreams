@@ -246,14 +246,6 @@
       <h2 class="section-title">Описание</h2>
       <p class="description-text" th:text="${product.description}"></p>
 
-      <!-- Ингредиенты -->
-      <h2 class="section-title">Ингредиенты</h2>
-      <div class="ingredients-list">
-                    <span class="ingredient-tag"
-                          th:each="ingredient : ${product.ingredients}"
-                          th:text="${ingredient}">
-                    </span>
-      </div>
     </div>
   </div>
 </div>
