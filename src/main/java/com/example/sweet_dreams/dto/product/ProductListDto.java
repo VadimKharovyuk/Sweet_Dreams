@@ -11,7 +11,7 @@ public class ProductListDto {
     private Long id;
     private String name;
     private BigDecimal price;
-    private String mainImage;
+    private String mainImageBase64;
     private boolean available;
     private Double averageRating;
 }

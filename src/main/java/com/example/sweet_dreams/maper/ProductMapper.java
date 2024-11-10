@@ -4,9 +4,11 @@ import com.example.sweet_dreams.dto.product.ProductCreateDto;
 import com.example.sweet_dreams.dto.product.ProductDto;
 import com.example.sweet_dreams.dto.product.ProductListDto;
 import com.example.sweet_dreams.dto.product.ProductUpdateDto;
+import com.example.sweet_dreams.exception.CategoryNotFoundException;
 import com.example.sweet_dreams.model.Category;
 import com.example.sweet_dreams.model.Product;
 import com.example.sweet_dreams.model.Review;
+import com.example.sweet_dreams.repository.CategoryRepository;
 import com.example.sweet_dreams.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -23,8 +25,9 @@ import java.util.stream.Collectors;
 public class ProductMapper {
     private final CategoryMapper categoryMapper;
     private final ImageService imageService;
+    private final CategoryRepository categoryRepository;
 
-    // Маппинг из ProductCreateDto в Product
+
     public Product toEntity(ProductCreateDto dto) throws IOException {
         if (dto == null) return null;
 
@@ -40,24 +43,14 @@ public class ProductMapper {
 
         // Установка категории
         if (dto.getCategoryId() != null) {
-            Category category = new Category();
-            category.setId(dto.getCategoryId());
+            Category category = categoryRepository.findById(dto.getCategoryId())
+                    .orElseThrow(() -> new CategoryNotFoundException("Category not found"));
             product.setCategory(category);
         }
 
-        // Установка ингредиентов
-        if (dto.getIngredients() != null) {
-            product.setIngredients(new HashSet<>(dto.getIngredients()));
-        }
-
-        // Обработка изображения
+        // Установка изображения
         if (dto.getMainImage() != null && !dto.getMainImage().isEmpty()) {
             product.setMainImage(imageService.convertToBytes(dto.getMainImage()));
-        }
-
-        // Установка цен для разных размеров
-        if (dto.getSizePrices() != null) {
-            product.setSizePrices(new HashMap<>(dto.getSizePrices()));
         }
 
         product.setAvailable(true);
@@ -94,7 +87,6 @@ public class ProductMapper {
                 .build();
     }
 
-    // Маппинг из Product в ProductListDto
     public ProductListDto toListDto(Product product) {
         if (product == null) return null;
 
@@ -102,10 +94,10 @@ public class ProductMapper {
                 .id(product.getId())
                 .name(product.getName())
                 .price(product.getPrice())
-                .mainImage(product.getMainImage() != null ?
+                .mainImageBase64(product.getMainImage() != null ?
                         imageService.convertToBase64(product.getMainImage()) : null)
                 .available(product.isAvailable())
-//                .averageRating(calculateAverageRating(product.getAverageRating()))
+                .averageRating(calculateAverageRating(product.getReviews()))
                 .build();
     }
 

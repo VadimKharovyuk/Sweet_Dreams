@@ -11,6 +11,7 @@ import com.example.sweet_dreams.service.MockMultipartFile;
 import com.example.sweet_dreams.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,14 +19,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-
+@Slf4j
 @Controller
 @RequestMapping("/admin/products")
 @RequiredArgsConstructor
 public class AdminProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
-    private final ImageService imageService;
+
 
     // Показать список всех продуктов
     @GetMapping
@@ -50,45 +51,21 @@ public class AdminProductController {
     public String createProduct(@Valid @ModelAttribute ProductCreateDto productCreateDto,
                                 BindingResult result,
                                 Model model) {
+        log.info("Получен запрос на создание продукта: {}", productCreateDto);
+
         if (result.hasErrors()) {
+            log.error("Ошибки валидации: {}", result.getAllErrors());
             model.addAttribute("categories", categoryService.getAllCategories());
             model.addAttribute("cakeSizes", Product.CakeSize.values());
             return "admin/products/create";
         }
 
         try {
-            // Обработка изображения если оно есть
-            if (productCreateDto.getMainImage() != null && !productCreateDto.getMainImage().isEmpty()) {
-                byte[] imageData = productCreateDto.getMainImage().getBytes();
-
-                // Проверка размеров
-                if (!imageService.isValidImageDimensions(imageData, 1920, 1080)) {
-                    result.rejectValue("mainImage", "error.image",
-                            "Изображение слишком большое. Максимальный размер: 1920x1080");
-                    model.addAttribute("categories", categoryService.getAllCategories());
-                    model.addAttribute("cakeSizes", Product.CakeSize.values());
-                    return "admin/products/create";
-                }
-
-                // Оптимизация изображения
-                byte[] optimizedImage = imageService.optimizeImage(imageData,
-                        productCreateDto.getMainImage().getContentType());
-
-                // Создаем временный MultipartFile с оптимизированным изображением
-                MultipartFile optimizedFile = new MockMultipartFile(
-                        productCreateDto.getMainImage().getOriginalFilename(),
-                        productCreateDto.getMainImage().getOriginalFilename(),
-                        "image/webp",
-                        optimizedImage
-                );
-
-                // Устанавливаем оптимизированное изображение
-                productCreateDto.setMainImage(optimizedFile);
-            }
-
-            productService.createProduct(productCreateDto);
+            ProductDto createdProduct = productService.createProduct(productCreateDto);
+            log.info("Продукт успешно создан: {}", createdProduct);
             return "redirect:/admin/products?success";
         } catch (Exception e) {
+            log.error("Ошибка при создании продукта", e);
             model.addAttribute("error", e.getMessage());
             model.addAttribute("categories", categoryService.getAllCategories());
             model.addAttribute("cakeSizes", Product.CakeSize.values());

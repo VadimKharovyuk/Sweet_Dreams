@@ -61,36 +61,25 @@
 
   <form th:action="@{/admin/products/create}"
         th:object="${productCreateDto}"
+        method="post"
         enctype="multipart/form-data">
-
 
     <div class="form-group">
       <label for="name">Название:</label>
-      <input type="text"
-             id="name"
-             th:field="*{name}"
-             required>
-      <div class="error-message"
-           th:if="${#fields.hasErrors('name')}"
+      <input type="text" id="name" th:field="*{name}" required>
+      <div class="error-message" th:if="${#fields.hasErrors('name')}"
            th:errors="*{name}"></div>
     </div>
 
     <div class="form-group">
       <label for="description">Описание:</label>
-      <textarea id="description"
-                th:field="*{description}"
-                rows="4"></textarea>
+      <textarea id="description" th:field="*{description}"></textarea>
     </div>
 
     <div class="form-group">
       <label for="price">Цена:</label>
-      <input type="number"
-             id="price"
-             th:field="*{price}"
-             step="0.01"
-             required>
-      <div class="error-message"
-           th:if="${#fields.hasErrors('price')}"
+      <input type="number" id="price" th:field="*{price}" step="0.01" required>
+      <div class="error-message" th:if="${#fields.hasErrors('price')}"
            th:errors="*{price}"></div>
     </div>
 
@@ -103,10 +92,6 @@
                 th:text="${category.name}">
         </option>
       </select>
-      <div class="error-message"
-           th:if="${#fields.hasErrors('categoryId')}"
-           th:errors="*{categoryId}">
-      </div>
     </div>
 
     <div class="form-group">
@@ -115,27 +100,19 @@
         <option value="">Выберите размер</option>
         <option th:each="size : ${cakeSizes}"
                 th:value="${size}"
-                th:text="${size.name()}"></option>
+                th:text="${size.name()}">
+        </option>
       </select>
     </div>
 
     <div class="form-group">
       <label for="weight">Вес (кг):</label>
-      <input type="number"
-             id="weight"
-             th:field="*{weight}"
-             step="0.1">
-      <div class="error-message"
-           th:if="${#fields.hasErrors('weight')}"
-           th:errors="*{weight}"></div>
+      <input type="number" id="weight" th:field="*{weight}" step="0.1">
     </div>
 
     <div class="form-group">
-      <label for="mainImage">Изображение:</label>
-      <input type="file"
-             id="mainImage"
-             name="mainImage"
-             accept="image/*">
+      <label for="mainImage">Фото:</label>
+      <input type="file" id="mainImage" name="mainImage" accept="image/*">
     </div>
 
     <div class="form-group">
@@ -147,22 +124,15 @@
 
     <div class="form-group">
       <label for="preparationTimeHours">Время приготовления (часы):</label>
-      <input type="number"
-             id="preparationTimeHours"
-             th:field="*{preparationTimeHours}"
-             min="0">
+      <input type="number" id="preparationTimeHours" th:field="*{preparationTimeHours}">
     </div>
 
     <div class="form-group">
       <label for="minimumOrderTimeHours">Минимальное время заказа (часы):</label>
-      <input type="number"
-             id="minimumOrderTimeHours"
-             th:field="*{minimumOrderTimeHours}"
-             min="0">
+      <input type="number" id="minimumOrderTimeHours" th:field="*{minimumOrderTimeHours}">
     </div>
 
-    <button type="submit" class="btn btn-primary">Создать</button>
-    <a href="/admin/products" class="btn">Отмена</a>
+    <button type="submit">Создать</button>
   </form>
 </div>
 </body>
