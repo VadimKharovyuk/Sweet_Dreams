@@ -5,101 +5,212 @@
   <title>Вход в систему</title>
   <style>
     :root {
-      --primary-color: #40E0D0;
-      --primary-dark: #20B2AA;
-      --white: #FFFFFF;
-      --gray-light: #F5F5F5;
-      --error-color: #FF4444;
+      /* Основная цветовая схема */
+      --primary: #7c3aed;
+      --primary-dark: #5b21b6;
+      --primary-light: #a78bfa;
+
+      /* Темная тема */
+      --bg-dark: #1a1a1a;
+      --bg-card: #2d2d2d;
+      --text-primary: #ffffff;
+      --text-secondary: #a0aec0;
+      --border-color: #404040;
+
+      /* Статусы */
+      --success: #10b981;
+      --error: #ef4444;
+
+      /* Тени */
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
     body {
-      font-family: Arial, sans-serif;
-      background-color: var(--gray-light);
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      font-family: system-ui, -apple-system, sans-serif;
       min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      background: linear-gradient(135deg, var(--bg-dark) 0%, var(--primary-dark) 100%);
     }
 
     .login-container {
-      background-color: var(--white);
-      padding: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      background-color: var(--bg-card);
+      padding: 2.5rem;
+      border-radius: 15px;
       width: 100%;
       max-width: 400px;
+      box-shadow: var(--shadow-lg);
+      animation: slideUp 0.5s ease-out;
+      border: 1px solid var(--border-color);
     }
 
     h1 {
-      color: var(--primary-dark);
-      text-align: center;
+      color: var(--text-primary);
+      font-size: 2rem;
       margin-bottom: 2rem;
+      text-align: center;
+      position: relative;
+    }
+
+    h1::after {
+      content: '';
+      position: absolute;
+      bottom: -0.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 3px;
     }
 
     .form-group {
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
+      position: relative;
     }
 
     label {
       display: block;
       margin-bottom: 0.5rem;
-      color: #333;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
     }
 
     input {
       width: 100%;
-      padding: 0.8rem;
-      border: 1px solid #ddd;
-      border-radius: 5px;
+      padding: 0.75rem;
+      background-color: var(--bg-dark);
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-primary);
       font-size: 1rem;
+      transition: all 0.3s ease;
     }
 
-    .error-message {
-      color: var(--error-color);
-      text-align: center;
-      margin-bottom: 1rem;
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
     }
 
-    .success-message {
-      color: #28a745;
-      text-align: center;
-      margin-bottom: 1rem;
+    input:focus + label {
+      color: var(--primary-light);
     }
 
     button {
       width: 100%;
       padding: 1rem;
-      background-color: var(--primary-color);
+      background-color: var(--primary);
       color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 8px;
       font-size: 1rem;
+      font-weight: 600;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: all 0.3s ease;
+      margin-top: 1rem;
     }
 
     button:hover {
       background-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
     }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .error-message,
+    .success-message {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .error-message {
+      background-color: rgba(239, 68, 68, 0.1);
+      color: var(--error);
+      border: 1px solid var(--error);
+    }
+
+    .success-message {
+      background-color: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+      border: 1px solid var(--success);
+    }
+
+    /* Анимации */
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    /* Добавляем эффект свечения при фокусе на форме */
+    .login-container:focus-within {
+      box-shadow: var(--shadow-lg), 0 0 20px rgba(124, 58, 237, 0.2);
+    }
+
+    /* Адаптивность */
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 1.5rem;
+      }
+
+      h1 {
+        font-size: 1.75rem;
+      }
+
+      input {
+        font-size: 0.9rem;
+      }
+    }
+
   </style>
 </head>
 <body>
 <div class="login-container">
   <h1>Вход в систему</h1>
 
-  <!-- Сообщение об ошибке -->
   <div th:if="${error}" class="error-message" th:text="${error}"></div>
 
-  <!-- Сообщение об успешной регистрации -->
   <div th:if="${param.registered}" class="success-message">
     Регистрация успешна. Войдите в систему.
   </div>
 
   <form th:action="@{/admin/login}" method="post">
     <div class="form-group">
-      <label for="username">Имя пользователя:</label>
+      <label for="username">Имя пользователя</label>
       <input type="text"
              id="username"
              name="username"
@@ -108,7 +219,7 @@
     </div>
 
     <div class="form-group">
-      <label for="password">Пароль:</label>
+      <label for="password">Пароль</label>
       <input type="password"
              id="password"
              name="password"
@@ -120,3 +231,127 @@
 </div>
 </body>
 </html>
+
+
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--  <meta charset="UTF-8">-->
+<!--  <title>Вход в систему</title>-->
+<!--  <style>-->
+<!--    :root {-->
+<!--      &#45;&#45;primary-color: #40E0D0;-->
+<!--      &#45;&#45;primary-dark: #20B2AA;-->
+<!--      &#45;&#45;white: #FFFFFF;-->
+<!--      &#45;&#45;gray-light: #F5F5F5;-->
+<!--      &#45;&#45;error-color: #FF4444;-->
+<!--    }-->
+
+<!--    body {-->
+<!--      font-family: Arial, sans-serif;-->
+<!--      background-color: var(&#45;&#45;gray-light);-->
+<!--      margin: 0;-->
+<!--      padding: 20px;-->
+<!--      display: flex;-->
+<!--      justify-content: center;-->
+<!--      align-items: center;-->
+<!--      min-height: 100vh;-->
+<!--    }-->
+
+<!--    .login-container {-->
+<!--      background-color: var(&#45;&#45;white);-->
+<!--      padding: 2rem;-->
+<!--      border-radius: 10px;-->
+<!--      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);-->
+<!--      width: 100%;-->
+<!--      max-width: 400px;-->
+<!--    }-->
+
+<!--    h1 {-->
+<!--      color: var(&#45;&#45;primary-dark);-->
+<!--      text-align: center;-->
+<!--      margin-bottom: 2rem;-->
+<!--    }-->
+
+<!--    .form-group {-->
+<!--      margin-bottom: 1rem;-->
+<!--    }-->
+
+<!--    label {-->
+<!--      display: block;-->
+<!--      margin-bottom: 0.5rem;-->
+<!--      color: #333;-->
+<!--    }-->
+
+<!--    input {-->
+<!--      width: 100%;-->
+<!--      padding: 0.8rem;-->
+<!--      border: 1px solid #ddd;-->
+<!--      border-radius: 5px;-->
+<!--      font-size: 1rem;-->
+<!--    }-->
+
+<!--    .error-message {-->
+<!--      color: var(&#45;&#45;error-color);-->
+<!--      text-align: center;-->
+<!--      margin-bottom: 1rem;-->
+<!--    }-->
+
+<!--    .success-message {-->
+<!--      color: #28a745;-->
+<!--      text-align: center;-->
+<!--      margin-bottom: 1rem;-->
+<!--    }-->
+
+<!--    button {-->
+<!--      width: 100%;-->
+<!--      padding: 1rem;-->
+<!--      background-color: var(&#45;&#45;primary-color);-->
+<!--      color: white;-->
+<!--      border: none;-->
+<!--      border-radius: 5px;-->
+<!--      font-size: 1rem;-->
+<!--      cursor: pointer;-->
+<!--      transition: background-color 0.3s;-->
+<!--    }-->
+
+<!--    button:hover {-->
+<!--      background-color: var(&#45;&#45;primary-dark);-->
+<!--    }-->
+<!--  </style>-->
+<!--</head>-->
+<!--<body>-->
+<!--<div class="login-container">-->
+<!--  <h1>Вход в систему</h1>-->
+
+<!--  &lt;!&ndash; Сообщение об ошибке &ndash;&gt;-->
+<!--  <div th:if="${error}" class="error-message" th:text="${error}"></div>-->
+
+<!--  &lt;!&ndash; Сообщение об успешной регистрации &ndash;&gt;-->
+<!--  <div th:if="${param.registered}" class="success-message">-->
+<!--    Регистрация успешна. Войдите в систему.-->
+<!--  </div>-->
+
+<!--  <form th:action="@{/admin/login}" method="post">-->
+<!--    <div class="form-group">-->
+<!--      <label for="username">Имя пользователя:</label>-->
+<!--      <input type="text"-->
+<!--             id="username"-->
+<!--             name="username"-->
+<!--             required-->
+<!--             autofocus>-->
+<!--    </div>-->
+
+<!--    <div class="form-group">-->
+<!--      <label for="password">Пароль:</label>-->
+<!--      <input type="password"-->
+<!--             id="password"-->
+<!--             name="password"-->
+<!--             required>-->
+<!--    </div>-->
+
+<!--    <button type="submit">Войти</button>-->
+<!--  </form>-->
+<!--</div>-->
+<!--</body>-->
+<!--</html>-->

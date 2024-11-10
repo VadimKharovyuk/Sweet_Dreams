@@ -5,6 +5,7 @@
 
   <link rel="stylesheet" th:href="@{/css/navigation.css}">
   <link rel="stylesheet" th:href="@{/css/styles.css}">
+
   <style>
     /* styles.css */
     :root {
@@ -127,25 +128,25 @@
 <div th:replace="fragments/navigation :: navigation"></div>
 
 <div class="contact-container">
-  <h1 class="contact-title">Есть вопросы?</h1>
-  <p class="contact-subtitle">Мы готовы проконсультировать!</p>
+  <h1 class="contact-title">Є питання?</h1>
+  <p class="contact-subtitle">Ми готові проконсультувати!</p>
 
   <form th:action="@{/contact}" th:object="${contactMessageDto}" method="post" class="contact-form">
     <div class="form-group">
-      <input type="text" class="form-control" th:field="*{firstName}" placeholder="Ваше имя" required>
+      <input type="text" class="form-control" th:field="*{firstName}" placeholder="Ваше ім'я" required>
     </div>
 
     <div class="form-group">
-      <input type="tel" class="form-control" th:field="*{phoneNumber}" placeholder="Номер телефона" required>
+      <input type="tel" class="form-control" th:field="*{phoneNumber}" placeholder="Номер телефону" required>
     </div>
 
     <div class="form-group">
-      <input type="email" class="form-control" th:field="*{email}" placeholder="Эл. адрес" required>
+      <input type="email" class="form-control" th:field="*{email}" placeholder="Ел. адреса" required>
     </div>
 
     <div class="form-group">
       <select class="form-control form-select" th:field="*{subject}" required>
-        <option value="" selected disabled>Выберите тему</option>
+        <option value="" selected disabled>Оберіть тему</option>
         <option th:each="subjectOption : ${subjects}"
                 th:value="${subjectOption}"
                 th:text="${subjectOption.displayName}">
@@ -155,15 +156,15 @@
 
     <div class="form-group">
                 <textarea class="form-control" th:field="*{message}"
-                          placeholder="Опишите ваш вопрос подробнее..." required></textarea>
+                          placeholder="Опишіть ваше питання детальніше..." required></textarea>
     </div>
 
     <button type="submit" class="submit-button">
-      Отправить заявку на консультацию
+      Надіслати заявку на консультацію
     </button>
 
     <p class="policy-text">
-      Используя эту форму, вы принимаете политику компании
+      Використовуючи цю форму, ви приймаєте політику компанії
     </p>
   </form>
 </div>

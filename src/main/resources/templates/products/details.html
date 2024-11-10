@@ -2,6 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
+
+  <link rel="stylesheet" th:href="@{/css/navigation.css}">
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
   <title th:text="${product.name} + ' - Sweet Dreams'"></title>
   <style>
     :root {
@@ -172,13 +175,8 @@
   </style>
 </head>
 <body>
-<!-- Навигация -->
-<nav class="navbar">
-  <a href="/" class="logo">Sweet Dreams</a>
-  <div>
-    <a href="/cart" class="cart-link">🛒 Корзина</a>
-  </div>
-</nav>
+<!-- Подключаем навигацию -->
+<div th:replace="fragments/navigation :: navigation"></div>
 
 <!-- Основной контент -->
 <div class="product-details">

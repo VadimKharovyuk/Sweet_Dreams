@@ -4,47 +4,173 @@
   <meta charset="UTF-8">
   <title>Панель управления</title>
   <style>
-    /* Используйте те же стили root */
     :root {
-      --primary-color: #40E0D0;
-      --primary-dark: #20B2AA;
-      --white: #FFFFFF;
-      --gray-light: #F5F5F5;
-      --error-color: #FF4444;
+      /* Основная цветовая схема */
+      --primary: #7c3aed;
+      --primary-dark: #5b21b6;
+      --primary-light: #a78bfa;
+
+      /* Темная тема */
+      --bg-dark: #1a1a1a;
+      --bg-card: #2d2d2d;
+      --text-primary: #ffffff;
+      --text-secondary: #a0aec0;
+      --border-color: #404040;
+
+      /* Акценты и состояния */
+      --hover-bg: #3d3d3d;
+      --active-bg: #4a4a4a;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --error: #ef4444;
+
+      /* Тени */
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
     }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      font-family: system-ui, -apple-system, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
     .dashboard-container {
       padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: var(--text-primary);
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 0.5rem;
     }
 
     .welcome-message {
       margin-bottom: 2rem;
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+    }
+
+    .welcome-message span {
+      color: var(--primary-light);
+      font-weight: 600;
     }
 
     .admin-menu {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
       margin-bottom: 2rem;
     }
 
     .menu-item {
-      padding: 1rem;
-      background-color: var(--white);
-      border-radius: 5px;
+      padding: 1.5rem;
+      background-color: var(--bg-card);
+      border-radius: 10px;
       text-align: center;
       text-decoration: none;
-      color: var(--primary-dark);
-      transition: all 0.3s;
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .menu-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 1;
     }
 
     .menu-item:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--primary);
+    }
+
+    .menu-item:hover::before {
+      opacity: 0.1;
+    }
+
+    .menu-item:active {
+      transform: translateY(-2px);
+      background-color: var(--active-bg);
     }
 
     .logout-form {
       text-align: right;
+      margin-top: 2rem;
     }
+
+    .logout-form button {
+      padding: 0.75rem 1.5rem;
+      background-color: var(--bg-card);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .logout-form button:hover {
+      background-color: var(--error);
+      border-color: var(--error);
+      color: white;
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Добавляем адаптивность */
+    @media (max-width: 768px) {
+      .dashboard-container {
+        padding: 1rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .admin-menu {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Анимация для карточек при загрузке */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .menu-item {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+
+    .menu-item:nth-child(1) { animation-delay: 0.1s; }
+    .menu-item:nth-child(2) { animation-delay: 0.2s; }
+    .menu-item:nth-child(3) { animation-delay: 0.3s; }
+    .menu-item:nth-child(4) { animation-delay: 0.4s; }
+    .menu-item:nth-child(5) { animation-delay: 0.5s; }
   </style>
 </head>
 <body>

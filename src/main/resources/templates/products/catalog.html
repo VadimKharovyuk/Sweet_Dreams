@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Sweet Dreams - Каталог</title>
+  <link rel="stylesheet" th:href="@{/css/navigation.css}">
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
   <style>
     :root {
       --primary-color: #40E0D0;
@@ -124,12 +126,7 @@
   </style>
 </head>
 <body>
-<nav class="navbar">
-  <a href="/" class="logo">Sweet Dreams</a>
-  <div>
-    <a href="/cart" class="cart-link">🛒 Корзина</a>
-  </div>
-</nav>
+<div th:replace="fragments/navigation :: navigation"></div>
 
 <div class="main-content">
   <!-- Категории -->
@@ -162,7 +159,7 @@
       <div class="product-content">
         <h3 class="product-title" th:text="${product.name}"></h3>
         <div class="product-price"
-             th:text="${#numbers.formatDecimal(product.price, 1, 2)} + ' ₽'">
+             th:text="${#numbers.formatDecimal(product.price, 1, 2)} + ' UAH'">
         </div>
         <a th:href="@{/products/{id}(id=${product.id})}"
            class="btn-details">

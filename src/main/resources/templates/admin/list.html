@@ -4,26 +4,209 @@
   <meta charset="UTF-8">
   <title>Список администраторов</title>
   <style>
-    /* Аналогичные стили + стили для таблицы */
+    :root {
+      /* Основная цветовая схема */
+      --primary: #7c3aed;
+      --primary-dark: #5b21b6;
+      --primary-light: #a78bfa;
+
+      /* Темная тема */
+      --bg-dark: #1a1a1a;
+      --bg-card: #2d2d2d;
+      --bg-table: #242424;
+      --text-primary: #ffffff;
+      --text-secondary: #a0aec0;
+      --border-color: #404040;
+
+      /* Статусы */
+      --status-active: #10b981;
+      --status-inactive: #ef4444;
+
+      /* Акценты и состояния */
+      --hover-bg: #3d3d3d;
+      --active-bg: #4a4a4a;
+
+      /* Тени */
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      font-family: system-ui, -apple-system, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    .list-container {
+      padding: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: var(--text-primary);
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 0.5rem;
+    }
+
+    /* Стилизация таблицы */
     table {
       width: 100%;
-      border-collapse: collapse;
-      margin-top: 1rem;
+      border-collapse: separate;
+      border-spacing: 0;
+      background-color: var(--bg-table);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-lg);
+      animation: fadeIn 0.5s ease-out;
     }
 
     th, td {
       padding: 1rem;
       text-align: left;
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid var(--border-color);
+      transition: background-color 0.3s ease;
     }
 
     th {
-      background-color: var(--primary-color);
+      background-color: var(--bg-card);
+      color: var(--primary-light);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.875rem;
+      letter-spacing: 0.05em;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr {
+      transition: all 0.3s ease;
+    }
+
+    tbody tr:hover {
+      background-color: var(--hover-bg);
+      transform: scale(1.005);
+    }
+
+    /* Стилизация статусов */
+    td:nth-child(5) {
+      font-weight: 600;
+    }
+
+    td:nth-child(5):contains("Активен") {
+      color: var(--status-active);
+    }
+
+    td:nth-child(5):contains("Неактивен") {
+      color: var(--status-inactive);
+    }
+
+    /* Стилизация кнопок действий */
+    td a {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      margin: 0.25rem;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    td a:first-child {
+      background-color: var(--primary);
       color: white;
     }
 
-    tr:hover {
-      background-color: var(--gray-light);
+    td a:first-child:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    td a:last-child {
+      background-color: var(--status-inactive);
+      color: white;
+    }
+
+    td a:last-child:hover {
+      background-color: #dc2626;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Кнопка добавления */
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      background-color: var(--primary);
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Анимации */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    tbody tr {
+      animation: fadeIn 0.5s ease-out forwards;
+      opacity: 0;
+    }
+
+    tbody tr:nth-child(1) { animation-delay: 0.1s; }
+    tbody tr:nth-child(2) { animation-delay: 0.2s; }
+    tbody tr:nth-child(3) { animation-delay: 0.3s; }
+    tbody tr:nth-child(4) { animation-delay: 0.4s; }
+    tbody tr:nth-child(5) { animation-delay: 0.5s; }
+
+    /* Адаптивность */
+    @media (max-width: 1200px) {
+      table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .list-container {
+        padding: 1rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      th, td {
+        padding: 0.75rem;
+      }
     }
   </style>
 </head>
