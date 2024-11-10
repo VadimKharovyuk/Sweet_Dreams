@@ -2,67 +2,210 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Категории</title>
   <style>
-    .category-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
+    :root {
+      --primary-color: #40E0D0;
+      --primary-dark: #20B2AA;
+      --white: #FFFFFF;
+      --gray-light: #F5F5F5;
+      --text-color: #333333;
     }
 
-    .category-table th, .category-table td {
-      padding: 10px;
-      border: 1px solid #ddd;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
     }
 
-    .actions {
+    /* Навигация */
+    .navbar {
       display: flex;
-      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 5%;
+      background-color: var(--white);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      color: var(--primary-dark);
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .nav-link {
+      color: var(--text-color);
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-link:hover {
+      background-color: var(--primary-color);
+      color: var(--white);
+    }
+
+    /* Контейнер */
+    .container {
+      padding: 0 5%;
+    }
+
+    /* Сетка категорий */
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      padding: 2rem 0;
+    }
+
+    /* Карточка категории */
+    .category-card {
+      background: var(--white);
+      border-radius: 10px;
+      padding: 2rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .category-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .category-title {
+      font-size: 1.4rem;
+      color: var(--primary-dark);
+      margin-bottom: 1rem;
+    }
+
+    .category-description {
+      color: var(--text-color);
+      margin-bottom: 1rem;
+      line-height: 1.5;
+    }
+
+    .category-meta {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 1rem;
+    }
+
+    .category-slug {
+      background-color: var(--gray-light);
+      padding: 0.3rem 0.6rem;
+      border-radius: 15px;
+      font-size: 0.85rem;
+      display: inline-block;
+      margin-bottom: 1rem;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
     }
 
     .btn {
-      padding: 5px 10px;
+      padding: 0.5rem 1rem;
       border-radius: 5px;
-      cursor: pointer;
       text-decoration: none;
+      cursor: pointer;
+      border: none;
+      font-size: 0.9rem;
+      flex: 1;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .btn-edit {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .btn-delete {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    /* Адаптивность */
+    @media (max-width: 1200px) {
+      .categories-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .categories-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
-<h1>Управление категориями</h1>
+<!-- Навигация -->
+<nav class="navbar">
+  <div class="nav-left">
+    <a href="/" class="logo">Sweet Dreams</a>
+    <div class="nav-links">
+      <a href="/admin/products" class="nav-link">Продукты</a>
+      <a href="/admin/categories" class="nav-link">Категории</a>
+      <a href="/admin/orders" class="nav-link">Заказы</a>
+    </div>
+  </div>
+</nav>
 
-<a href="/admin/categories/create" class="btn">Добавить категорию</a>
+<div class="container">
+  <!-- Заголовок и кнопка добавления -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h1>Управление категориями</h1>
+    <a href="/admin/categories/create" class="btn btn-primary">Добавить категорию</a>
+  </div>
 
-<table class="category-table">
-  <thead>
-  <tr>
-    <th>ID</th>
-    <th>Название</th>
-    <th>Описание</th>
-    <th>Slug</th>
-    <th>Дата создания</th>
-    <th>Действия</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr th:each="category : ${categories}">
-    <td th:text="${category.id}"></td>
-    <td th:text="${category.name}"></td>
-    <td th:text="${category.description}"></td>
-    <td th:text="${category.slug}"></td>
-    <td th:text="${#temporals.format(category.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
-    <td class="actions">
-      <a th:href="@{/admin/categories/edit/{id}(id=${category.id})}"
-         class="btn">Редактировать</a>
-      <form th:action="@{/admin/categories/delete/{id}(id=${category.id})}"
-            method="post"
-            style="display: inline;"
-            onsubmit="return confirm('Вы уверены?');">
-        <button type="submit" class="btn">Удалить</button>
-      </form>
-    </td>
-  </tr>
-  </tbody>
-</table>
+  <!-- Сетка категорий -->
+  <div class="categories-grid">
+    <div class="category-card" th:each="category : ${categories}">
+      <h2 class="category-title" th:text="${category.name}"></h2>
+      <p class="category-description" th:text="${category.description}"></p>
+      <div class="category-slug" th:text="${category.slug}"></div>
+      <div class="category-meta">
+        <p>ID: <span th:text="${category.id}"></span></p>
+        <p>Создано: <span th:text="${#temporals.format(category.createdAt, 'dd.MM.yyyy HH:mm')}"></span></p>
+      </div>
+      <div class="card-actions">
+        <a th:href="@{/admin/categories/edit/{id}(id=${category.id})}"
+           class="btn btn-edit">Редактировать</a>
+        <form th:action="@{/admin/categories/delete/{id}(id=${category.id})}"
+              method="post"
+              style="display: inline-flex;"
+              onsubmit="return confirm('Вы уверены? Это действие нельзя отменить.');">
+          <button type="submit" class="btn btn-delete">Удалить</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>

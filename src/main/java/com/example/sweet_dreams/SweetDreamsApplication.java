@@ -12,4 +12,6 @@ public class SweetDreamsApplication {
 
     //// Скидки и акции
 
+    //Ингредиенты
+
 }

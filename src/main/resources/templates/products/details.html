@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${product.name} + ' - Sweet Dreams'"></title>
+  <style>
+    :root {
+      --primary-color: #40E0D0;
+      --primary-dark: #20B2AA;
+      --white: #FFFFFF;
+      --gray-light: #F5F5F5;
+      --text-color: #333333;
+    }
+
+    .product-details {
+      margin-top: 80px;
+      padding: 2rem 5%;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Секция с фото */
+    .product-image-section {
+      background: var(--white);
+      border-radius: 10px;
+      padding: 1rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 500px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    /* Секция с информацией */
+    .product-info-section {
+      background: var(--white);
+      border-radius: 10px;
+      padding: 2rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .product-title {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-color);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .info-item {
+      padding: 1rem;
+      background: var(--gray-light);
+      border-radius: 8px;
+    }
+
+    .info-label {
+      font-weight: bold;
+      color: var(--primary-dark);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .info-value {
+      color: var(--text-color);
+    }
+
+    .price-section {
+      margin: 2rem 0;
+      padding: 1rem;
+      background: var(--primary-dark);
+      color: var(--white);
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .current-price {
+      font-size: 2.5rem;
+      font-weight: bold;
+    }
+
+    .buttons-section {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 1rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: var(--white);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+    }
+
+    /* Секция с описанием */
+    .product-description-section {
+      background: var(--white);
+      border-radius: 10px;
+      padding: 2rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      grid-column: 1 / -1;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--primary-dark);
+    }
+
+    .description-text {
+      line-height: 1.6;
+      color: var(--text-color);
+    }
+
+    /* Секция с ингредиентами */
+    .ingredients-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .ingredient-tag {
+      background: var(--gray-light);
+      padding: 0.5rem 1rem;
+      border-radius: 15px;
+      font-size: 0.9rem;
+    }
+
+    /* Рейтинг и отзывы */
+    .rating-section {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .rating-value {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .reviews-count {
+      color: var(--text-color);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+<!-- Навигация -->
+<nav class="navbar">
+  <a href="/" class="logo">Sweet Dreams</a>
+  <div>
+    <a href="/cart" class="cart-link">🛒 Корзина</a>
+  </div>
+</nav>
+
+<!-- Основной контент -->
+<div class="product-details">
+  <div class="product-grid">
+    <!-- Секция с фото -->
+    <div class="product-image-section">
+      <img th:if="${product.mainImageBase64}"
+           th:src="@{'data:image/jpeg;base64,' + ${product.mainImageBase64}}"
+           class="product-image"
+           th:alt="${product.name}">
+    </div>
+
+    <!-- Секция с информацией -->
+    <div class="product-info-section">
+      <h1 class="product-title" th:text="${product.name}"></h1>
+
+      <!-- Рейтинг -->
+      <div class="rating-section">
+        <span class="rating-value" th:text="${#numbers.formatDecimal(product.averageRating, 1, 1)} + '★'"></span>
+        <span class="reviews-count" th:text="'(' + ${product.reviewsCount} + ' отзывов)'"></span>
+      </div>
+
+      <!-- Основная информация -->
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Категория</span>
+          <span class="info-value" th:text="${product.category.name}"></span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Размер</span>
+          <span class="info-value" th:text="${product.size}"></span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Вес</span>
+          <span class="info-value" th:text="${product.weight} + ' кг'"></span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Время приготовления</span>
+          <span class="info-value" th:text="${product.preparationTimeHours} + ' ч.'"></span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Минимальное время заказа</span>
+          <span class="info-value" th:text="${product.minimumOrderTimeHours} + ' ч.'"></span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Возможность кастомизации</span>
+          <span class="info-value" th:text="${product.custom ? 'Да' : 'Нет'}"></span>
+        </div>
+      </div>
+
+      <!-- Цена -->
+      <div class="price-section">
+        <div class="current-price" th:text="${#numbers.formatDecimal(product.price, 1, 2)} + ' ₽'"></div>
+      </div>
+
+      <!-- Кнопки -->
+      <div class="buttons-section">
+        <a href="#" class="btn btn-primary">Добавить в корзину</a>
+        <a href="/products" class="btn">Назад к каталогу</a>
+      </div>
+    </div>
+
+    <!-- Описание -->
+    <div class="product-description-section">
+      <h2 class="section-title">Описание</h2>
+      <p class="description-text" th:text="${product.description}"></p>
+
+      <!-- Ингредиенты -->
+      <h2 class="section-title">Ингредиенты</h2>
+      <div class="ingredients-list">
+                    <span class="ingredient-tag"
+                          th:each="ingredient : ${product.ingredients}"
+                          th:text="${ingredient}">
+                    </span>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

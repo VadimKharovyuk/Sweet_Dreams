@@ -16,4 +16,7 @@ public interface ProductService {
     List<ProductDto> getProductsByCategory(Long categoryId);
     List<ProductDto> searchProducts(String keyword);
     void toggleProductAvailability(Long id);
+
+    List<ProductListDto> getAllAvailableProducts();
+
 }

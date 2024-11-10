@@ -29,7 +29,7 @@ public class AdminController {
         return "admin/register";
     }
 
-    // Обработка регистрации
+
     @PostMapping("/register")
     public String registerAdmin(@Valid @ModelAttribute AdminCreateDto adminCreateDto,
                                 BindingResult result,

@@ -437,7 +437,51 @@
             margin-right: 0.5rem;
         }
 
+        .nav-dropdown {
+            position: relative;
+            display: inline-block;
+        }
 
+        .nav-dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: var(--white);
+            min-width: 200px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            padding: 0.5rem 0;
+            z-index: 1000;
+        }
+
+        .nav-dropdown:hover .nav-dropdown-content {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 0.8rem 1.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link:after {
+            content: '▼';
+            font-size: 0.8em;
+        }
 
     </style>
 </head>
@@ -447,8 +491,18 @@
     <div class="nav-left">
         <a href="/" class="logo">Sweet Dreams</a>
         <div class="nav-links">
-            <a href="/categories" class="nav-link">Категорії</a>
-            <a href="/products" class="nav-link">Продукти</a>
+            <div class="nav-dropdown">
+                <a href="#" class="nav-link">Категорії</a>
+                <div class="nav-dropdown-content">
+                    <a th:href="@{/products}" class="dropdown-item">Все товары</a>
+                    <a th:each="category : ${listCategory}"
+                       th:href="@{/products/category/{id}(id=${category.id})}"
+                       th:text="${category.name}"
+                       class="dropdown-item">
+                    </a>
+                </div>
+            </div>
+<!--            <a href="/products" class="nav-link">Продукти</a>-->
         </div>
     </div>
     <div class="nav-right">
@@ -551,7 +605,7 @@
     <div class="full-width-content">
         <h2>Створюємо солодкі моменти</h2>
         <p>Кожен торт - це історія, розказана через смак і дизайн. Довірте нам створення вашого ідеального десерту для будь-якої особливої події.</p>
-        <a href="#" class="cta-button">Замовити торт</a>
+        <a href="/products" class="cta-button">Замовити торт</a>
     </div>
 </section>
 

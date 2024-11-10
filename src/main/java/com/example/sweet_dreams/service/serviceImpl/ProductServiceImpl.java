@@ -77,6 +77,15 @@ public class ProductServiceImpl implements ProductService {
                 .map(productMapper::toListDto)
                 .collect(Collectors.toList());
     }
+    public List<ProductListDto> getAllAvailableProducts() {
+        // Получаем все доступные продукты
+        List<Product> availableProducts = productRepository.findByAvailableTrue();
+
+        // Преобразуем в DTO и возвращаем
+        return availableProducts.stream()
+                .map(productMapper::toListDto)
+                .collect(Collectors.toList());
+    }
 
     @Override
     public void deleteProduct(Long id) {
@@ -85,7 +94,7 @@ public class ProductServiceImpl implements ProductService {
         }
         productRepository.deleteById(id);
     }
-
+    // Метод для получения продуктов по категории
     @Override
     public List<ProductDto> getProductsByCategory(Long categoryId) {
         validateCategory(categoryId);
@@ -94,6 +103,8 @@ public class ProductServiceImpl implements ProductService {
                 .map(productMapper::toDto)
                 .collect(Collectors.toList());
     }
+
+
 
     @Override
     public List<ProductDto> searchProducts(String keyword) {
@@ -110,6 +121,10 @@ public class ProductServiceImpl implements ProductService {
         product.setAvailable(!product.isAvailable());
         productRepository.save(product);
     }
+
+
+
+
 
     private void validateCategory(Long categoryId) {
         if (!categoryRepository.existsById(categoryId)) {
