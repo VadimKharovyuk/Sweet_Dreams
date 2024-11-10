@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Детали сообщения</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div class="container">
+  <h1>Детали сообщения</h1>
+
+  <div class="message-details">
+    <div class="detail-row">
+      <span class="label">ID:</span>
+      <span th:text="${message.id}"></span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Дата создания:</span>
+      <span th:text="${#temporals.format(message.createdAt, 'dd.MM.yyyy HH:mm')}"></span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Имя:</span>
+      <span th:text="${message.firstName + ' ' + message.lastName}"></span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Email:</span>
+      <span th:text="${message.email}"></span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Телефон:</span>
+      <span th:text="${message.phoneNumber}"></span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Тема:</span>
+      <span th:text="${message.subject.displayName}"></span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Сообщение:</span>
+      <div class="message-content" th:text="${message.message}"></div>
+    </div>
+  </div>
+
+  <div class="buttons">
+    <a href="/contact/admin/messages" class="btn btn-secondary">Назад к списку</a>
+    <form th:action="@{/contact/admin/messages/{id}/delete(id=${message.id})}"
+          method="post" style="display: inline;">
+      <button type="submit" class="btn btn-danger"
+              onclick="return confirm('Вы уверены?')">Удалить</button>
+    </form>
+  </div>
+</div>
+</body>
+</html>

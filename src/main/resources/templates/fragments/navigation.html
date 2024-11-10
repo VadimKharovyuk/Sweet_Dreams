@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+<nav th:fragment="navigation" class="navigation">
+  <div class="nav-container">
+    <div class="logo">
+      <a href="/">Sweet Dreams</a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="/">Главная</a></li>
+      <li><a href="/products">Каталог</a></li>
+      <li><a href="/about">О нас</a></li>
+      <li><a href="/contact">Контакты</a></li>
+      <li>
+        <a href="/cart" class="cart-icon" aria-label="Корзина">
+          🛒
+          <span class="cart-count" th:text="${cartCount ?: 0}">0</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+</body>
+</html>

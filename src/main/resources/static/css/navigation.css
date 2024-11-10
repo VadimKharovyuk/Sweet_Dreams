@@ -1,0 +1,101 @@
+.navigation {
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 1rem 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo a {
+    color: #20B2AA;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 2rem;
+    align-items: center; /* Добавлено для выравнивания корзины */
+}
+
+.nav-links li a {
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav-links li a:hover {
+    color: #20B2AA;
+}
+
+/* Стили для корзины */
+.cart-icon {
+    position: relative;
+    text-decoration: none;
+    font-size: 1.5rem;
+    padding: 0.5rem;
+    color: #333;
+    transition: color 0.3s ease;
+}
+
+.cart-icon:hover {
+    color: #20B2AA;
+}
+
+.cart-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #20B2AA;
+    color: white;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 50%;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .nav-container {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+
+    /* Адаптивные стили для корзины */
+    .cart-icon {
+        margin: 0.5rem 0;
+    }
+
+    .cart-count {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+    }
+}

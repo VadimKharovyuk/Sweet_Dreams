@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Связаться с нами</title>
+
+  <link rel="stylesheet" th:href="@{/css/navigation.css}">
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <style>
+    /* styles.css */
+    :root {
+      --main-color: #20B2AA;
+      --white: #ffffff;
+      --light-gray: #f5f5f5;
+      --dark-gray: #333333;
+    }
+
+    /* Навигация */
+    .navigation {
+      background-color: var(--white);
+      padding: 1rem 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .navigation nav ul {
+      display: flex;
+      justify-content: center;
+      list-style: none;
+      gap: 2rem;
+    }
+
+    .navigation nav a {
+      color: var(--dark-gray);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .navigation nav a:hover {
+      color: var(--main-color);
+    }
+
+    /* Форма */
+    .contact-container {
+      max-width: 800px;
+      margin: 3rem auto;
+      padding: 2rem;
+      background-color: var(--white);
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    }
+
+    .contact-title {
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .contact-subtitle {
+      text-align: center;
+      color: var(--dark-gray);
+      margin-bottom: 2rem;
+    }
+
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      position: relative;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 1rem;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+      background-color: var(--light-gray);
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--main-color);
+    }
+
+    textarea.form-control {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .form-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 1em;
+    }
+
+    .submit-button {
+      background-color: var(--main-color);
+      color: var(--white);
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 25px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      align-self: center;
+      min-width: 200px;
+    }
+
+    .submit-button:hover {
+      background-color: #1a9690;
+    }
+
+    .policy-text {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+<!-- Подключаем навигацию -->
+<div th:replace="fragments/navigation :: navigation"></div>
+
+<div class="contact-container">
+  <h1 class="contact-title">Есть вопросы?</h1>
+  <p class="contact-subtitle">Мы готовы проконсультировать!</p>
+
+  <form th:action="@{/contact}" th:object="${contactMessageDto}" method="post" class="contact-form">
+    <div class="form-group">
+      <input type="text" class="form-control" th:field="*{firstName}" placeholder="Ваше имя" required>
+    </div>
+
+    <div class="form-group">
+      <input type="tel" class="form-control" th:field="*{phoneNumber}" placeholder="Номер телефона" required>
+    </div>
+
+    <div class="form-group">
+      <input type="email" class="form-control" th:field="*{email}" placeholder="Эл. адрес" required>
+    </div>
+
+    <div class="form-group">
+      <select class="form-control form-select" th:field="*{subject}" required>
+        <option value="" selected disabled>Выберите тему</option>
+        <option th:each="subjectOption : ${subjects}"
+                th:value="${subjectOption}"
+                th:text="${subjectOption.displayName}">
+        </option>
+      </select>
+    </div>
+
+    <div class="form-group">
+                <textarea class="form-control" th:field="*{message}"
+                          placeholder="Опишите ваш вопрос подробнее..." required></textarea>
+    </div>
+
+    <button type="submit" class="submit-button">
+      Отправить заявку на консультацию
+    </button>
+
+    <p class="policy-text">
+      Используя эту форму, вы принимаете политику компании
+    </p>
+  </form>
+</div>
+</body>
+</html>

@@ -12,7 +12,7 @@ public class SweetDreamsApplication {
 
     //// Скидки и акции
 
-    //Ингредиенты
+
 
     //Связаться с нами
 
