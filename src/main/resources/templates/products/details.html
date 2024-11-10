@@ -234,7 +234,10 @@
 
       <!-- Кнопки -->
       <div class="buttons-section">
-        <a href="#" class="btn btn-primary">Добавить в корзину</a>
+        <form th:action="@{/orders/cart/add}" method="post">
+          <input type="hidden" name="productId" th:value="${product.id}" />
+          <button type="submit" class="btn btn-primary">Добавить в корзину</button>
+        </form>
         <a href="/products" class="btn">Назад к каталогу</a>
       </div>
     </div>

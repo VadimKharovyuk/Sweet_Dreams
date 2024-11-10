@@ -4,6 +4,7 @@ import com.example.sweet_dreams.dto.product.ProductCreateDto;
 import com.example.sweet_dreams.dto.product.ProductDto;
 import com.example.sweet_dreams.dto.product.ProductListDto;
 import com.example.sweet_dreams.dto.product.ProductUpdateDto;
+import com.example.sweet_dreams.model.Product;
 
 import java.util.List;
 
@@ -18,5 +19,7 @@ public interface ProductService {
     void toggleProductAvailability(Long id);
 
     List<ProductListDto> getAllAvailableProducts();
+
+    ProductDto findById(Long productId);
 
 }

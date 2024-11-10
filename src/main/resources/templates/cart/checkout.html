@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<h1>Оформление заказа</h1>
+<form th:action="@{/orders/checkout}" method="post">
+  <div>
+    <label>Имя:</label>
+    <input type="text" name="customerName" required/>
+  </div>
+  <div>
+    <label>Email:</label>
+    <input type="email" name="customerEmail" required/>
+  </div>
+  <div>
+    <label>Телефон:</label>
+    <input type="tel" name="customerPhone" required/>
+  </div>
+  <div>
+    <label>Адрес доставки:</label>
+    <textarea name="deliveryAddress" required></textarea>
+  </div>
+  <button type="submit">Подтвердить заказ</button>
+</form>
+</body>
+</html>

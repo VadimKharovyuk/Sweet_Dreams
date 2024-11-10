@@ -24,4 +24,17 @@
   </div>
 </nav>
 </body>
+<script>
+  // В файл navigation.js
+  function updateCartCount() {
+    fetch('/api/cart/count')
+            .then(response => response.json())
+            .then(data => {
+              document.querySelector('.cart-count').textContent = data.count;
+            });
+  }
+
+  // Обновлять счетчик при загрузке страницы
+  document.addEventListener('DOMContentLoaded', updateCartCount);
+</script>
 </html>

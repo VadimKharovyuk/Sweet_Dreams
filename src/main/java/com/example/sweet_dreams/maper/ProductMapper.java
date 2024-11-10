@@ -147,4 +147,6 @@ public class ProductMapper {
                 .average()
                 .orElse(0.0);
     }
+
+
 }

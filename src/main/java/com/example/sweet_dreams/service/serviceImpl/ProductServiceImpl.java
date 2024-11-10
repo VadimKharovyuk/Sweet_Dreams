@@ -13,6 +13,7 @@ import com.example.sweet_dreams.repository.CategoryRepository;
 import com.example.sweet_dreams.repository.ProductRepository;
 import com.example.sweet_dreams.service.ImageService;
 import com.example.sweet_dreams.service.ProductService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,6 +86,13 @@ public class ProductServiceImpl implements ProductService {
         return availableProducts.stream()
                 .map(productMapper::toListDto)
                 .collect(Collectors.toList());
+    }
+    @Override
+    @Transactional(readOnly = true)
+    public ProductDto findById(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found with id: " + id));
+        return productMapper.toDto(product);
     }
 
     @Override
