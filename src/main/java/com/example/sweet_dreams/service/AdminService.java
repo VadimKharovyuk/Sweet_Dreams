@@ -1,7 +1,7 @@
 package com.example.sweet_dreams.service;
 
-import com.example.sweet_dreams.dto.AdminCreateDto;
-import com.example.sweet_dreams.dto.AdminDto;
+import com.example.sweet_dreams.dto.admin.AdminCreateDto;
+import com.example.sweet_dreams.dto.admin.AdminDto;
 import com.example.sweet_dreams.model.Admin;
 
 import java.util.List;

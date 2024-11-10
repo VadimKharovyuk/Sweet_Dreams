@@ -1,4 +1,4 @@
-package com.example.sweet_dreams.dto;
+package com.example.sweet_dreams.dto.admin;
 
 import com.example.sweet_dreams.model.Admin;
 import lombok.Builder;

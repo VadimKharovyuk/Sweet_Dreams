@@ -2,8 +2,8 @@ package com.example.sweet_dreams.service.serviceImpl;
 
 
 import com.example.sweet_dreams.config.PasswordUtils;
-import com.example.sweet_dreams.dto.AdminCreateDto;
-import com.example.sweet_dreams.dto.AdminDto;
+import com.example.sweet_dreams.dto.admin.AdminCreateDto;
+import com.example.sweet_dreams.dto.admin.AdminDto;
 import com.example.sweet_dreams.exception.AdminAlreadyExistsException;
 import com.example.sweet_dreams.exception.AdminNotFoundException;
 import com.example.sweet_dreams.model.Admin;

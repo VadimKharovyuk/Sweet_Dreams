@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Создание категории</title>
+  <style>
+    .form-container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+<div class="form-container">
+  <h1>Создание категории</h1>
+
+  <form th:action="@{/admin/categories/create}"
+        th:object="${categoryCreateDto}"
+        method="post">
+
+    <div class="form-group">
+      <label for="name">Название:</label>
+      <input type="text"
+             id="name"
+             th:field="*{name}"
+             required>
+      <div class="error-message"
+           th:if="${#fields.hasErrors('name')}"
+           th:errors="*{name}"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Описание:</label>
+      <textarea id="description"
+                th:field="*{description}"
+                rows="4"></textarea>
+    </div>
+
+    <button type="submit" class="btn">Создать</button>
+    <a href="/admin/categories" class="btn">Отмена</a>
+  </form>
+</div>
+</body>
+</html>

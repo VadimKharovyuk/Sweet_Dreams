@@ -32,6 +32,10 @@ public class Product {
     @Column(nullable = false)
     private BigDecimal price;
 
+    @Lob
+    @Column(name = "main_image")
+    private byte[] mainImage;
+
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -59,9 +63,6 @@ public class Product {
     @Column(name = "is_custom")
     private boolean custom;  // можно ли кастомизировать торт
 
-    // Изображения
-    @Column(name = "main_image")
-    private String mainImage;
 
 
     // Статус и наличие
@@ -75,8 +76,8 @@ public class Product {
     private Integer minimumOrderTimeHours; // минимальное время для заказа
 
     // Рейтинг и отзывы
-    @OneToMany(mappedBy = "product")
-    private List<Review> averageRating;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviews = new ArrayList<>();
 
     @Column(name = "reviews_count")
     private Integer reviewsCount = 0;
@@ -85,8 +86,10 @@ public class Product {
 
     // Цены для разных размеров
     @ElementCollection
-    @CollectionTable(name = "product_size_prices",
-            joinColumns = @JoinColumn(name = "product_id"))
+    @CollectionTable(
+            name = "product_size_prices",
+            joinColumns = @JoinColumn(name = "product_id")
+    )
     @MapKeyEnumerated(EnumType.STRING)
     @MapKeyColumn(name = "size")
     @Column(name = "price")

@@ -1,6 +1,6 @@
 package com.example.sweet_dreams.controler;
 
-import com.example.sweet_dreams.dto.AdminCreateDto;
+import com.example.sweet_dreams.dto.admin.AdminCreateDto;
 import com.example.sweet_dreams.exception.AdminAlreadyExistsException;
 import com.example.sweet_dreams.model.Admin;
 import com.example.sweet_dreams.repository.AdminRepository;
@@ -83,8 +83,6 @@ public class AdminController {
         if (session.getAttribute("adminId") == null) {
             return "redirect:/admin/login";
         }
-
-        // Добавляем данные для дашборда
         model.addAttribute("adminUsername", session.getAttribute("adminUsername"));
         return "admin/dashboard";
     }
@@ -94,7 +92,7 @@ public class AdminController {
         session.invalidate();
         return "redirect:/admin/login";
     }
-    // Список всех админов (только для ADMIN)
+//add to template
     @GetMapping("/list")
     public String listAdmins(Model model) {
         model.addAttribute("admins", adminService.findAllAdmins());

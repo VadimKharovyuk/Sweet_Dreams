@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Управление продуктами</title>
+  <style>
+    .product-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    .product-table th, .product-table td {
+      padding: 10px;
+      border: 1px solid #ddd;
+    }
+
+    .product-image {
+      max-width: 100px;
+      max-height: 100px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .btn-primary { background-color: #007bff; color: white; }
+    .btn-danger { background-color: #dc3545; color: white; }
+    .btn-warning { background-color: #ffc107; color: black; }
+
+    .success-message {
+      color: green;
+      padding: 10px;
+      margin: 10px 0;
+      background-color: #e8f5e9;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Управление продуктами</h1>
+
+  <!-- Сообщения об успешных операциях -->
+  <div th:if="${param.success}" class="success-message">
+    Продукт успешно создан
+  </div>
+  <div th:if="${param.updated}" class="success-message">
+    Продукт успешно обновлен
+  </div>
+  <div th:if="${param.deleted}" class="success-message">
+    Продукт успешно удален
+  </div>
+
+  <a href="/admin/products/create" class="btn btn-primary">Добавить продукт</a>
+
+  <table class="product-table">
+    <thead>
+    <tr>
+      <th>Изображение</th>
+      <th>Название</th>
+      <th>Цена</th>
+      <th>Категория</th>
+      <th>Статус</th>
+      <th>Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="product : ${products}">
+      <td>
+        <img th:if="${product.mainImageBase64}"
+             th:src="@{'data:image/jpeg;base64,' + ${product.mainImageBase64}}"
+             class="product-image"
+             th:alt="${product.name}">
+      </td>
+      <td th:text="${product.name}"></td>
+      <td th:text="${product.price}"></td>
+      <td th:text="${product.category?.name}"></td>
+      <td th:text="${product.available ? 'Доступен' : 'Недоступен'}"></td>
+      <td class="actions">
+        <a th:href="@{/admin/products/edit/{id}(id=${product.id})}"
+           class="btn btn-warning">Редактировать</a>
+
+        <form th:action="@{/admin/products/{id}/toggle-availability(id=${product.id})}"
+              method="post" style="display: inline;">
+          <button type="submit" class="btn btn-primary">
+            [[${product.available ? 'Скрыть' : 'Показать'}]]
+          </button>
+        </form>
+
+        <form th:action="@{/admin/products/delete/{id}(id=${product.id})}"
+              method="post"
+              style="display: inline;"
+              onsubmit="return confirm('Вы уверены?');">
+          <button type="submit" class="btn btn-danger">Удалить</button>
+        </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>
