@@ -14,10 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -26,7 +23,6 @@ public class ProductMapper {
     private final CategoryMapper categoryMapper;
     private final ImageService imageService;
     private final CategoryRepository categoryRepository;
-
 
     public Product toEntity(ProductCreateDto dto) throws IOException {
         if (dto == null) return null;
@@ -55,36 +51,40 @@ public class ProductMapper {
 
         product.setAvailable(true);
         product.setReviewsCount(0);
+        product.setReviews(new ArrayList<>());
 
         return product;
     }
 
-    // Маппинг из Product в ProductDto
     public ProductDto toDto(Product product) {
         if (product == null) return null;
 
-        return ProductDto.builder()
+        ProductDto dto = ProductDto.builder()
                 .id(product.getId())
                 .name(product.getName())
                 .description(product.getDescription())
                 .price(product.getPrice())
-                .category(product.getCategory() != null ?
-                        categoryMapper.toDto(product.getCategory()) : null)
+                .category(categoryMapper.toDto(product.getCategory()))
                 .size(product.getSize())
                 .weight(product.getWeight())
-                .ingredients(product.getIngredients())
                 .custom(product.isCustom())
-                .mainImageBase64(product.getMainImage() != null ?
-                        imageService.convertToBase64(product.getMainImage()) : null)
                 .available(product.isAvailable())
                 .preparationTimeHours(product.getPreparationTimeHours())
                 .minimumOrderTimeHours(product.getMinimumOrderTimeHours())
-//                .averageRating(calculateAverageRating(product.getAverageRating()))
                 .reviewsCount(product.getReviewsCount())
-                .sizePrices(product.getSizePrices())
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())
                 .build();
+
+        if (product.getMainImage() != null) {
+            dto.setMainImageBase64(imageService.convertToBase64(product.getMainImage()));
+        }
+
+        if (product.getReviews() != null && !product.getReviews().isEmpty()) {
+            dto.setAverageRating(calculateAverageRating(product.getReviews()));
+        }
+
+        return dto;
     }
 
     public ProductListDto toListDto(Product product) {
@@ -110,7 +110,7 @@ public class ProductMapper {
         if (dto.getPrice() != null) product.setPrice(dto.getPrice());
         if (dto.getSize() != null) product.setSize(dto.getSize());
         if (dto.getWeight() != null) product.setWeight(dto.getWeight());
-        if (dto.getIngredients() != null) product.setIngredients(dto.getIngredients());
+
 
         product.setCustom(dto.isCustom());
         product.setAvailable(dto.isAvailable());
@@ -119,8 +119,7 @@ public class ProductMapper {
             product.setPreparationTimeHours(dto.getPreparationTimeHours());
         if (dto.getMinimumOrderTimeHours() != null)
             product.setMinimumOrderTimeHours(dto.getMinimumOrderTimeHours());
-        if (dto.getSizePrices() != null)
-            product.setSizePrices(dto.getSizePrices());
+
 
         // Обновление категории
         if (dto.getCategoryId() != null) {

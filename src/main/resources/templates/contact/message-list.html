@@ -2,16 +2,147 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Список сообщений</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" th:href="@{/css/navigation.css}">
   <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <style>
+    /* Общие стили */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 6rem auto 2rem; /* отступ сверху для фиксированной навигации */
+      padding: 2rem;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    /* Стили для алертов */
+    .alert {
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 5px;
+      text-align: center;
+    }
+
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .alert-danger {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    /* Стили для таблицы */
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      background-color: #fff;
+    }
+
+    .table th,
+    .table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .table th {
+      background-color: #20B2AA;
+      color: white;
+      font-weight: 500;
+    }
+
+    .table tbody tr:hover {
+      background-color: #f8f9fa;
+    }
+
+    /* Стили для кнопок */
+    .actions {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-info {
+      background-color: #20B2AA;
+      color: white;
+    }
+
+    .btn-info:hover {
+      background-color: #1a9690;
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background-color: #c82333;
+    }
+
+    /* Адаптивность */
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+        margin-top: 5rem;
+      }
+
+      .table {
+        display: block;
+        overflow-x: auto;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+        margin: 0.2rem 0;
+        text-align: center;
+      }
+    }
+  </style>
 </head>
 <body>
+<!-- Подключаем навигацию -->
+<div th:replace="~{fragments/navigation :: navigation}"></div>
+
 <div class="container">
   <h1>Список сообщений</h1>
 
-  <div th:if="${successMessage}" class="alert alert-success"
-       th:text="${successMessage}"></div>
-  <div th:if="${errorMessage}" class="alert alert-danger"
-       th:text="${errorMessage}"></div>
+  <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+  <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
 
   <table class="table">
     <thead>
@@ -31,13 +162,10 @@
       <td th:text="${message.firstName + ' ' + message.lastName}"></td>
       <td th:text="${message.email}"></td>
       <td th:text="${message.subject.displayName}"></td>
-      <td>
-        <a th:href="@{/contact/admin/messages/{id}(id=${message.id})}"
-           class="btn btn-info">Просмотр</a>
-        <form th:action="@{/contact/admin/messages/{id}/delete(id=${message.id})}"
-              method="post" style="display: inline;">
-          <button type="submit" class="btn btn-danger"
-                  onclick="return confirm('Вы уверены?')">Удалить</button>
+      <td class="actions">
+        <a th:href="@{/contact/admin/messages/{id}(id=${message.id})}" class="btn btn-info">Просмотр</a>
+        <form th:action="@{/contact/admin/messages/{id}/delete(id=${message.id})}" method="post">
+          <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">Удалить</button>
         </form>
       </td>
     </tr>

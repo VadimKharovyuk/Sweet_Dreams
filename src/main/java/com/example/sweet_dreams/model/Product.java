@@ -36,7 +36,6 @@ public class Product {
     @Column(name = "main_image")
     private byte[] mainImage;
 
-
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
@@ -48,22 +47,8 @@ public class Product {
     @Column(name = "weight")
     private Double weight;  // вес в кг
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(
-            name = "product_ingredients",
-            joinColumns = @JoinColumn(name = "product_id"),
-            indexes = @Index(name = "idx_ingredient_product", columnList = "product_id")
-    )
-    @Column(name = "ingredient", length = 100, nullable = false)
-    @Builder.Default
-    private Set<String> ingredients = new HashSet<>();
-
-
-
     @Column(name = "is_custom")
     private boolean custom;  // можно ли кастомизировать торт
-
-
 
     // Статус и наличие
     @Column(name = "is_available")
@@ -82,20 +67,6 @@ public class Product {
     @Column(name = "reviews_count")
     private Integer reviewsCount = 0;
 
-
-
-    // Цены для разных размеров
-    @ElementCollection
-    @CollectionTable(
-            name = "product_size_prices",
-            joinColumns = @JoinColumn(name = "product_id")
-    )
-    @MapKeyEnumerated(EnumType.STRING)
-    @MapKeyColumn(name = "size")
-    @Column(name = "price")
-    private Map<CakeSize, BigDecimal> sizePrices = new HashMap<>();
-
-
     // Аудит
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -113,6 +84,7 @@ public class Product {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
     public enum CakeSize {
         SMALL(14),    // 14 см
         MEDIUM(18),   // 18 см

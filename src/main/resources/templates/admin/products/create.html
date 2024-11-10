@@ -51,6 +51,53 @@
     select option:first-child {
       color: #6c757d;
     }
+
+
+
+
+    .size-prices-container {
+      border: 1px solid #ddd;
+      padding: 1rem;
+      border-radius: 4px;
+      margin-top: 0.5rem;
+    }
+
+    .size-price-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+      padding: 0.5rem;
+    }
+
+    .size-price-row:hover {
+      background-color: #f8f9fa;
+    }
+
+    .size-price-row label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-width: 150px;
+    }
+
+    .price-input {
+      width: 150px;
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .price-input:disabled {
+      background-color: #e9ecef;
+      cursor: not-allowed;
+    }
+
+    .price-input:focus {
+      border-color: #20B2AA;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(32, 178, 170, 0.2);
+    }
   </style>
 </head>
 <body>
@@ -59,86 +106,146 @@
 
   <div th:if="${error}" class="error-message" th:text="${error}"></div>
 
+  <!-- Improved form with validation and better structure -->
   <form th:action="@{/admin/products/create}"
         th:object="${productCreateDto}"
         method="post"
-        enctype="multipart/form-data">
+        enctype="multipart/form-data"
+        class="product-form">
 
-    <div class="form-group">
-      <label for="name">Название:</label>
-      <input type="text" id="name" th:field="*{name}" required>
-      <div class="error-message" th:if="${#fields.hasErrors('name')}"
-           th:errors="*{name}"></div>
+    <!-- Basic Information Section -->
+    <div class="form-section">
+      <h3>Основная информация</h3>
+      <div class="form-group">
+        <label for="name">Название:</label>
+        <input type="text"
+               id="name"
+               th:field="*{name}"
+               class="form-control"
+               required
+               minlength="2"
+               maxlength="100">
+        <div class="error-message" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Описание:</label>
+        <textarea id="description"
+                  th:field="*{description}"
+                  class="form-control"
+                  rows="4"></textarea>
+      </div>
     </div>
 
-    <div class="form-group">
-      <label for="description">Описание:</label>
-      <textarea id="description" th:field="*{description}"></textarea>
+    <!-- Price and Category Section -->
+    <div class="form-section">
+      <h3>Цена и категория</h3>
+      <div class="form-group">
+        <label for="price">Цена (₽):</label>
+        <input type="number"
+               id="price"
+               th:field="*{price}"
+               class="form-control"
+               step="0.01"
+               min="0.01"
+               required>
+        <div class="error-message" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="categoryId">Категория:</label>
+        <select id="categoryId"
+                th:field="*{categoryId}"
+                class="form-control"
+                required>
+          <option value="">Выберите категорию</option>
+          <option th:each="category : ${categories}"
+                  th:value="${category.id}"
+                  th:text="${category.name}">
+          </option>
+        </select>
+        <div class="error-message" th:if="${#fields.hasErrors('categoryId')}" th:errors="*{categoryId}"></div>
+      </div>
     </div>
 
-    <div class="form-group">
-      <label for="price">Цена:</label>
-      <input type="number" id="price" th:field="*{price}" step="0.01" required>
-      <div class="error-message" th:if="${#fields.hasErrors('price')}"
-           th:errors="*{price}"></div>
+    <!-- Cake Specifications Section -->
+    <div class="form-section">
+      <h3>Характеристики торта</h3>
+      <div class="form-group">
+        <label for="size">Размер торта:</label>
+        <select id="size"
+                th:field="*{size}"
+                class="form-control"
+                required>
+          <option value="">Выберите размер</option>
+          <option th:each="cakeSize : ${cakeSizes}"
+                  th:value="${cakeSize.name()}"
+                  th:text="${cakeSize.getDiameter() + ' см'}">
+          </option>
+        </select>
+        <div class="error-message" th:if="${#fields.hasErrors('size')}" th:errors="*{size}"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="weight">Вес (кг):</label>
+        <input type="number"
+               id="weight"
+               th:field="*{weight}"
+               class="form-control"
+               step="0.1"
+               min="0">
+        <div class="error-message" th:if="${#fields.hasErrors('weight')}" th:errors="*{weight}"></div>
+      </div>
     </div>
 
-    <div class="form-group">
-      <label for="categoryId">Категория:</label>
-      <select id="categoryId" th:field="*{categoryId}" required>
-        <option value="">Выберите категорию</option>
-        <option th:each="category : ${categories}"
-                th:value="${category.id}"
-                th:text="${category.name}">
-        </option>
-      </select>
+    <!-- Additional Options Section -->
+    <div class="form-section">
+      <h3>Дополнительные параметры</h3>
+      <div class="form-group">
+        <label for="mainImage">Фото торта:</label>
+        <input type="file"
+               id="mainImage"
+               name="mainImage"
+               class="form-control"
+               accept="image/*">
+      </div>
+
+      <div class="form-group custom-checkbox">
+        <label>
+          <input type="checkbox" th:field="*{custom}">
+          <span>Возможна кастомизация</span>
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label for="preparationTimeHours">Время приготовления (часы):</label>
+        <input type="number"
+               id="preparationTimeHours"
+               th:field="*{preparationTimeHours}"
+               class="form-control"
+               min="0">
+        <div class="error-message" th:if="${#fields.hasErrors('preparationTimeHours')}"
+             th:errors="*{preparationTimeHours}"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="minimumOrderTimeHours">Минимальное время заказа (часы):</label>
+        <input type="number"
+               id="minimumOrderTimeHours"
+               th:field="*{minimumOrderTimeHours}"
+               class="form-control"
+               min="0">
+        <div class="error-message" th:if="${#fields.hasErrors('minimumOrderTimeHours')}"
+             th:errors="*{minimumOrderTimeHours}"></div>
+      </div>
     </div>
 
-    <div class="form-group">
-      <label for="size">Размер:</label>
-      <select id="size" th:field="*{size}">
-        <option value="">Выберите размер</option>
-        <option th:each="size : ${cakeSizes}"
-                th:value="${size}"
-                th:text="${size.name()}">
-        </option>
-      </select>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Создать</button>
+      <a th:href="@{/admin/products}" class="btn btn-secondary">Отмена</a>
     </div>
-
-    <div class="form-group">
-      <label for="weight">Вес (кг):</label>
-      <input type="number" id="weight" th:field="*{weight}" step="0.1">
-    </div>
-
-    <div class="form-group">
-      <label for="mainImage">Фото:</label>
-      <input type="file" id="mainImage" name="mainImage" accept="image/*">
-    </div>
-
-    <div class="form-group">
-      <label>
-        <input type="checkbox" th:field="*{custom}">
-        Возможна кастомизация
-      </label>
-    </div>
-
-    <div class="form-group">
-      <label for="preparationTimeHours">Время приготовления (часы):</label>
-      <input type="number" id="preparationTimeHours" th:field="*{preparationTimeHours}">
-    </div>
-
-<!--    <div class="form-group">-->
-<!--      <label for="preparationTimeHours">ingredients:</label>-->
-<!--      <input type="text" id="ingredients" th:field="*{ingredients}">-->
-<!--    </div>-->
-
-    <div class="form-group">
-      <label for="minimumOrderTimeHours">Минимальное время заказа (часы):</label>
-      <input type="number" id="minimumOrderTimeHours" th:field="*{minimumOrderTimeHours}">
-    </div>
-
-    <button type="submit">Создать</button>
   </form>
+
 </div>
 </body>
 </html>

@@ -18,6 +18,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 @Slf4j
 @Controller
@@ -53,15 +55,21 @@ public class AdminProductController {
                                 Model model) {
         log.info("Получен запрос на создание продукта: {}", productCreateDto);
 
+        // Проверка обязательных полей
+        if (productCreateDto.getSize() == null) {
+            result.rejectValue("size", "error.size",
+                    "Необходимо выбрать размер торта");
+        }
+
+        if (productCreateDto.getPrice() == null || productCreateDto.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+            result.rejectValue("price", "error.price",
+                    "Цена должна быть положительной");
+        }
+
         if (result.hasErrors()) {
-            if (productCreateDto.getSizePrices() == null || productCreateDto.getSizePrices().isEmpty()) {
-                result.rejectValue("sizePrices", "error.sizePrices",
-                        "Необходимо указать хотя бы одну цену для размера");
-            }
             log.error("Ошибки валидации: {}", result.getAllErrors());
             model.addAttribute("categories", categoryService.getAllCategories());
             model.addAttribute("cakeSizes", Product.CakeSize.values());
-
             return "admin/products/create";
         }
 
