@@ -483,6 +483,80 @@
             font-size: 0.8em;
         }
 
+
+
+
+        .category-section {
+            margin-bottom: 3rem;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0 1rem;
+        }
+
+        .category-header h3 {
+            font-size: 1.5rem;
+            color: var(--text-color);
+        }
+
+        .view-all {
+            padding: 0.5rem 1rem;
+            background-color: var(--primary-color);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .view-all:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .categories-grid {
+            display: flex;
+            gap: 2rem;
+            overflow-x: auto;
+            padding: 1rem;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+        }
+
+        .categories-grid::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-card {
+            flex: 0 0 300px;
+            background: var(--white);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .btn-details {
+            display: block;
+            width: 100%;
+            padding: 0.8rem;
+            text-align: center;
+            background-color: var(--primary-color);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-details:hover {
+            background-color: var(--primary-dark);
+        }
+
     </style>
 </head>
 <body>
@@ -530,43 +604,78 @@
 <!-- Категории -->
 <section class="categories">
     <h2>Наші торти</h2>
-    <div class="categories-container">
-        <button class="scroll-button scroll-left" aria-label="Прокрутить влево">←</button>
-        <button class="scroll-button scroll-right" aria-label="Прокрутить вправо">→</button>
+    <div th:each="category : ${categories}" class="category-section">
+        <div class="category-header">
+            <h3 th:text="${category.name}"></h3>
+            <a th:href="@{/products/category/{id}(id=${category.id})}"
+               class="view-all">Дивитися всі</a>
+        </div>
 
-        <div class="categories-grid">
-            <!-- Карточка 1 -->
-            <div class="category-card">
-                <img src="/pic/test1.jpeg" alt="Весільні торти" class="category-image">
-                <div class="category-content">
-                    <h3 class="category-title">Весільні торти</h3>
-                    <p>Особливі торти для особливого дня</p>
-                    <span class="category-price">від 3000 UAH</span>
-                </div>
-            </div>
+        <div class="categories-container">
+            <button class="scroll-button scroll-left" aria-label="Прокрутить влево">←</button>
+            <button class="scroll-right scroll-right" aria-label="Прокрутить вправо">→</button>
 
-            <!-- Карточка 2 -->
-            <div class="category-card">
-                <img src="/pic/test2.webp" alt="Дитячі торти" class="category-image">
-                <div class="category-content">
-                    <h3 class="category-title">Дитячі торти</h3>
-                    <p>Яскраві торти для свята</p>
-                    <span class="category-price">від 2500 UAH</span>
-                </div>
-            </div>
-
-            <!-- Карточка 3 -->
-            <div class="category-card">
-                <img src="/pic/test3.jpeg" alt="Класичні торти" class="category-image">
-                <div class="category-content">
-                    <h3 class="category-title">Класичні торти</h3>
-                    <p>Традиційні рецепти</p>
-                    <span class="category-price">від 2000 UAH</span>
+            <div class="categories-grid">
+                <div class="category-card" th:each="product : ${category.products}">
+                    <img th:if="${product.mainImageBase64}"
+                         th:src="@{'data:image/jpeg;base64,' + ${product.mainImageBase64}}"
+                         class="category-image"
+                         th:alt="${product.name}">
+                    <div class="category-content">
+                        <h3 class="category-title" th:text="${product.name}"></h3>
+<!--                        <p th:text="${product.get}"></p>-->
+                        <span class="category-price"
+                              th:text="'від ' + ${#numbers.formatDecimal(product.price, 1, 2)} + ' UAH'">
+                        </span>
+                        <a th:href="@{/products/{id}(id=${product.id})}"
+                           class="btn-details">Детальніше</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<!--&lt;!&ndash; Категории &ndash;&gt;-->
+<!--<section class="categories">-->
+<!--    <h2>Наші торти</h2>-->
+<!--    <div class="categories-container">-->
+<!--        <button class="scroll-button scroll-left" aria-label="Прокрутить влево">←</button>-->
+<!--        <button class="scroll-button scroll-right" aria-label="Прокрутить вправо">→</button>-->
+
+<!--        <div class="categories-grid">-->
+<!--            &lt;!&ndash; Карточка 1 &ndash;&gt;-->
+<!--            <div class="category-card">-->
+<!--                <img src="/pic/test1.jpeg" alt="Весільні торти" class="category-image">-->
+<!--                <div class="category-content">-->
+<!--                    <h3 class="category-title">Весільні торти</h3>-->
+<!--                    <p>Особливі торти для особливого дня</p>-->
+<!--                    <span class="category-price">від 3000 UAH</span>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            &lt;!&ndash; Карточка 2 &ndash;&gt;-->
+<!--            <div class="category-card">-->
+<!--                <img src="/pic/test2.webp" alt="Дитячі торти" class="category-image">-->
+<!--                <div class="category-content">-->
+<!--                    <h3 class="category-title">Дитячі торти</h3>-->
+<!--                    <p>Яскраві торти для свята</p>-->
+<!--                    <span class="category-price">від 2500 UAH</span>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            &lt;!&ndash; Карточка 3 &ndash;&gt;-->
+<!--            <div class="category-card">-->
+<!--                <img src="/pic/test3.jpeg" alt="Класичні торти" class="category-image">-->
+<!--                <div class="category-content">-->
+<!--                    <h3 class="category-title">Класичні торти</h3>-->
+<!--                    <p>Традиційні рецепти</p>-->
+<!--                    <span class="category-price">від 2000 UAH</span>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</section>-->
 
 
 <section class="about-section">

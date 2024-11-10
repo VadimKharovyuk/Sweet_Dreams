@@ -14,4 +14,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByAvailableTrue();
 
 
+    List<Product> findTop4ByCategoryIdAndAvailableTrueOrderByCreatedAtDesc(Long id);
+
 }
