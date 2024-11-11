@@ -1,4 +1,3 @@
-<!-- cart/view.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -9,61 +8,282 @@
   <title>Корзина</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.css">
   <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.js"></script>
+  <style>
+    :root {
+      --primary-color: #6366f1;
+      --primary-hover: #4f46e5;
+      --background-color: #f9fafb;
+      --card-background: #ffffff;
+      --text-primary: #111827;
+      --text-secondary: #6b7280;
+      --border-color: #e5e7eb;
+    }
+
+    body {
+      background-color: var(--background-color);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text-primary);
+    }
+
+    .cart-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .page-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      color: var(--text-primary);
+    }
+
+    .empty-cart {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: var(--card-background);
+      border-radius: 1rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .empty-cart-title {
+      font-size: 1.5rem;
+      color: var(--text-primary);
+      margin-bottom: 1.5rem;
+    }
+
+    .shop-button {
+      display: inline-block;
+      background-color: var(--primary-color);
+      color: white;
+      padding: 0.75rem 2rem;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .shop-button:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .cart-table-container {
+      background: var(--card-background);
+      border-radius: 1rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    .cart-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    .cart-table th {
+      background-color: #f8fafc;
+      padding: 1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+    }
+
+    .cart-table td {
+      padding: 1.5rem 1rem;
+      vertical-align: middle;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .product-name {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .quantity-input {
+      width: 80px;
+      padding: 0.5rem;
+      border: 1px solid var(--border-color);
+      border-radius: 0.375rem;
+      text-align: center;
+    }
+
+    .update-button {
+      background-color: #f3f4f6;
+      color: var(--text-secondary);
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .update-button:hover {
+      background-color: #e5e7eb;
+    }
+
+    .remove-button {
+      color: #ef4444;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .remove-button:hover {
+      color: #dc2626;
+    }
+
+    .cart-summary {
+      background: var(--card-background);
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .total-label {
+      font-size: 1.125rem;
+      color: var(--text-secondary);
+    }
+
+    .total-amount {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .checkout-button {
+      display: block;
+      width: 100%;
+      background-color: var(--primary-color);
+      color: white;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      text-align: center;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .checkout-button:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 768px) {
+      .cart-table-container {
+        overflow-x: auto;
+      }
+
+      .cart-table {
+        min-width: 768px;
+      }
+
+      .cart-container {
+        margin: 1rem auto;
+      }
+
+      .page-title {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+    }
+
+    /* Анимации */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .cart-container {
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    /* Hover эффекты */
+    .cart-table tr:hover {
+      background-color: #f8fafc;
+    }
+
+    /* Стилизация скроллбара */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+  </style>
 </head>
-<div th:replace="fragments/navigation :: navigation"></div>
-<body class="bg-gray-100">
-<div class="container mx-auto px-4 py-8">
-  <h1 class="text-3xl font-bold mb-6">Корзина</h1>
+<body>
+<div th:replace="~{fragments/navigation :: navigation}"></div>
+
+<div class="cart-container">
+  <h1 class="page-title">Корзина</h1>
 
   <!-- Пустая корзина -->
-  <div th:if="${cartItems.empty}" class="text-center py-8">
-    <h2 class="text-xl mb-4">Ваша корзина пуста</h2>
-    <a href="/products" class="bg-pink-500 text-white px-6 py-2 rounded hover:bg-pink-600 transition">
+  <div th:if="${cartItems.empty}" class="empty-cart">
+    <h2 class="empty-cart-title">Ваша корзина пуста</h2>
+    <a href="/products" class="shop-button">
       Перейти к покупкам
     </a>
   </div>
 
   <!-- Корзина с товарами -->
-  <div th:unless="${cartItems.empty}" class="space-y-6">
-    <!-- Список товаров -->
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
+  <div th:unless="${cartItems.empty}">
+    <div class="cart-table-container">
+      <table class="cart-table">
+        <thead>
         <tr>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Товар</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Цена</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Количество</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Сумма</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Действия</th>
+          <th>Товар</th>
+          <th>Цена</th>
+          <th>Количество</th>
+          <th>Сумма</th>
+          <th></th>
         </tr>
         </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
+        <tbody>
         <tr th:each="item : ${cartItems}">
-          <td class="px-6 py-4">
-            <div class="text-sm font-medium text-gray-900" th:text="${item.productName}"></div>
+          <td>
+            <div class="product-name" th:text="${item.productName}"></div>
           </td>
-          <td class="px-6 py-4">
-            <div class="text-sm text-gray-900" th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 2, 'POINT')} + ' UAH'"></div>
-          </td>
-          <td class="px-6 py-4">
-            <form th:action="@{/orders/cart/update}" method="post" class="flex items-center space-x-2">
+          <td th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 2, 'POINT')} + ' UAH'"></td>
+          <td>
+            <form th:action="@{/orders/cart/update}" method="post" class="flex items-center gap-2">
               <input type="hidden" name="productId" th:value="${item.productId}"/>
               <input type="number" name="quantity" th:value="${item.quantity}" min="1"
-                     class="w-20 rounded border-gray-300 shadow-sm"/>
-              <button type="submit" class="bg-gray-100 text-gray-700 px-2 py-1 rounded hover:bg-gray-200">
+                     class="quantity-input"/>
+              <button type="submit" class="update-button">
                 Обновить
               </button>
             </form>
           </td>
-          <td class="px-6 py-4">
-            <div class="text-sm text-gray-900"
-                 th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'COMMA', 2, 'POINT')} + ' UAH'">
-            </div>
-          </td>
-          <td class="px-6 py-4">
+          <td th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'COMMA', 2, 'POINT')} + ' UAH'"></td>
+          <td>
             <form th:action="@{/orders/cart/remove}" method="post" class="inline">
               <input type="hidden" name="productId" th:value="${item.productId}"/>
-              <button type="submit" class="text-red-600 hover:text-red-800">Удалить</button>
+              <button type="submit" class="remove-button">Удалить</button>
             </form>
           </td>
         </tr>
@@ -71,97 +291,16 @@
       </table>
     </div>
 
-    <!-- Итого -->
-    <div class="bg-white p-6 rounded-lg shadow">
-      <div class="flex justify-between items-center mb-4">
-        <span class="text-lg font-medium">Итого:</span>
-        <span class="text-2xl font-bold"
+    <div class="cart-summary">
+      <div class="total-row">
+        <span class="total-label">Итого:</span>
+        <span class="total-amount"
               th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 2, 'POINT')} + ' UAH'">
                     </span>
       </div>
-      <div class="flex justify-end">
-        <a href="/orders/checkout"
-           class="bg-pink-500 text-white px-8 py-3 rounded-lg hover:bg-pink-600">
-          Оформить заказ
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-</body>
-</html>
-
-<!-- orders/checkout.html -->
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Оформление заказа</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100">
-<div class="container mx-auto px-4 py-8">
-  <h1 class="text-3xl font-bold mb-6">Оформление заказа</h1>
-
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-    <!-- Форма оформления заказа -->
-    <div class="bg-white p-6 rounded-lg shadow">
-      <form th:action="@{/orders/checkout}" method="post" class="space-y-6">
-        <div>
-          <label for="customerName" class="block text-sm font-medium text-gray-700">Имя</label>
-          <input type="text" id="customerName" name="customerName" required
-                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"/>
-        </div>
-
-        <div>
-          <label for="customerEmail" class="block text-sm font-medium text-gray-700">Email</label>
-          <input type="email" id="customerEmail" name="customerEmail" required
-                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"/>
-        </div>
-
-        <div>
-          <label for="customerPhone" class="block text-sm font-medium text-gray-700">Телефон</label>
-          <input type="tel" id="customerPhone" name="customerPhone" required
-                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"/>
-        </div>
-
-        <div>
-          <label for="deliveryAddress" class="block text-sm font-medium text-gray-700">Адрес доставки</label>
-          <textarea id="deliveryAddress" name="deliveryAddress" rows="3" required
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></textarea>
-        </div>
-
-        <div class="pt-4">
-          <button type="submit" class="w-full bg-pink-500 text-white px-6 py-3 rounded-lg hover:bg-pink-600">
-            Подтвердить заказ
-          </button>
-        </div>
-      </form>
-    </div>
-
-    <!-- Сводка заказа -->
-    <div class="bg-white p-6 rounded-lg shadow">
-      <h2 class="text-xl font-semibold mb-4">Ваш заказ</h2>
-      <div class="space-y-4">
-        <div th:each="item : ${cartItems}" class="flex justify-between items-center">
-          <div>
-            <span class="font-medium" th:text="${item.productName}"></span>
-            <span class="text-gray-500" th:text="'× ' + ${item.quantity}"></span>
-          </div>
-          <span class="font-medium"
-                th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'COMMA', 2, 'POINT')} + ' UAH'">
-                        </span>
-        </div>
-      </div>
-      <div class="mt-6 pt-6 border-t">
-        <div class="flex justify-between items-center">
-          <span class="text-lg font-medium">Итого:</span>
-          <span class="text-2xl font-bold"
-                th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 2, 'POINT')} + ' UAH'">
-                        </span>
-        </div>
-      </div>
+      <a href="/orders/checkout" class="checkout-button">
+        Оформить заказ
+      </a>
     </div>
   </div>
 </div>

@@ -30,25 +30,9 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
 
     @Override
+    @Transactional
     public Order create(OrderDTO orderDTO) {
-        // Загружаем все продукты одним запросом
-        List<Long> productIds = orderDTO.getItems().stream()
-                .map(OrderItemDTO::getProductId)
-                .collect(Collectors.toList());
-
-        Map<Long, Product> productMap = productRepository.findAllById(productIds).stream()
-                .collect(Collectors.toMap(Product::getId, p -> p));
-
-        // Проверяем, все ли продукты найдены
-        if (productIds.size() != productMap.size()) {
-            List<Long> notFoundIds = productIds.stream()
-                    .filter(id -> !productMap.containsKey(id))
-                    .toList();
-            throw new EntityNotFoundException("Products not found: " + notFoundIds);
-        }
-
         Order order = new Order();
-        // Установка основных полей заказа
         order.setCustomerName(orderDTO.getCustomerName());
         order.setCustomerEmail(orderDTO.getCustomerEmail());
         order.setCustomerPhone(orderDTO.getCustomerPhone());
@@ -56,26 +40,33 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(Order.OrderStatus.NEW);
         order.setCreatedAt(LocalDateTime.now());
 
-        // Создаем список позиций заказа
-        List<OrderItem> items = orderDTO.getItems().stream()
-                .map(itemDto -> {
-                    Product product = productMap.get(itemDto.getProductId());
-                    OrderItem orderItem = orderMapper.toEntity(itemDto, order, product);
-                    // Устанавливаем текущую цену продукта
-                    orderItem.setPrice(product.getPrice());
-                    return orderItem;
-                })
+        List<OrderItem> orderItems = orderDTO.getItems().stream()
+                .map(itemDto -> createOrderItem(itemDto, order))
                 .collect(Collectors.toList());
 
-        order.setItems(items);
-
-        // Рассчитываем общую сумму заказа
-        BigDecimal totalAmount = items.stream()
-                .map(item -> item.getPrice().multiply(new BigDecimal(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        order.setTotalAmount(totalAmount);
+        order.setItems(orderItems);
+        order.setTotalAmount(calculateTotal(orderItems));
 
         return orderRepository.save(order);
+    }
+
+
+    private OrderItem createOrderItem(OrderItemDTO itemDto, Order order) {
+        OrderItem orderItem = new OrderItem();
+        orderItem.setOrder(order);
+        orderItem.setQuantity(itemDto.getQuantity());
+        orderItem.setPrice(itemDto.getPrice());
+        // Устанавливаем связь с Product
+        Product product = productRepository.findById(itemDto.getProductId())
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+        orderItem.setProduct(product);
+        return orderItem;
+    }
+
+    private BigDecimal calculateTotal(List<OrderItem> items) {
+        return items.stream()
+                .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     @Override
@@ -102,5 +93,12 @@ public class OrderServiceImpl implements OrderService {
     public void delete(Long id) {
         Order order = findById(id);
         orderRepository.delete(order);
+    }
+
+    @Override
+    public boolean isProductAvailable(Long productId) {
+        return productRepository.findById(productId)
+                .map(Product::isAvailable)
+                .orElse(false);
     }
 }

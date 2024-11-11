@@ -14,4 +14,6 @@ public interface OrderService {
     Order updateStatus(Long orderId, Order.OrderStatus status);
     void delete(Long id);
 
+    boolean isProductAvailable(Long productId);
+
 }

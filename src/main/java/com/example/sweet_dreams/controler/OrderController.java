@@ -1,22 +1,28 @@
 package com.example.sweet_dreams.controler;
 
 import com.example.sweet_dreams.dto.order.CartItem;
+import com.example.sweet_dreams.dto.order.OrderDTO;
+import com.example.sweet_dreams.dto.order.OrderItemDTO;
 import com.example.sweet_dreams.dto.product.ProductDto;
+import com.example.sweet_dreams.model.Order;
+import com.example.sweet_dreams.service.OrderService;
 import com.example.sweet_dreams.service.ProductService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
+import java.util.stream.Collectors;
+@Slf4j
 @Controller
 @RequestMapping("/orders")
 @RequiredArgsConstructor
@@ -24,6 +30,134 @@ public class OrderController {
 
     private final ProductService productService;
     private static final String CART_SESSION_KEY = "cart";
+    private final OrderService orderService;
+
+
+    // Показать страницу оформления заказа
+    @GetMapping("/checkout")
+    public String showCheckoutForm(HttpSession session, Model model) {
+        // Получаем корзину из сессии
+        @SuppressWarnings("unchecked")
+        List<CartItem> cart = (List<CartItem>) session.getAttribute(CART_SESSION_KEY);
+
+        // Логируем для отладки
+        log.debug("Retrieved cart from session: {}", cart);
+
+        // Если корзина null, создаем пустую
+        if (cart == null) {
+            cart = new ArrayList<>();
+            session.setAttribute(CART_SESSION_KEY, cart);
+        }
+
+        // Проверка на пустую корзину
+        if (cart.isEmpty()) {
+            return "redirect:/cart?error=empty";
+        }
+
+        // Проверяем доступность всех товаров
+        if (!areAllProductsAvailable(cart)) {
+            return "redirect:/cart?error=unavailable";
+        }
+
+        // Если форма ещё не заполнялась, создаем новый DTO
+        if (!model.containsAttribute("orderDTO")) {
+            model.addAttribute("orderDTO", new OrderDTO());
+        }
+
+        BigDecimal total = calculateTotal(cart);
+        model.addAttribute("cartItems", cart);
+        model.addAttribute("total", total);
+
+        // Логируем данные, передаваемые в представление
+        log.debug("Sending to view - cartItems: {}, total: {}", cart, total);
+
+        return "orders/checkout";
+    }
+
+
+    @PostMapping("/checkout")
+    public String processCheckout(@Valid @ModelAttribute OrderDTO orderDTO,
+                                  BindingResult bindingResult,
+                                  HttpSession session,
+                                  Model model,
+                                  RedirectAttributes redirectAttributes) {
+        List<CartItem> cart = getCart(session);
+
+        if (cart.isEmpty()) {
+            return "redirect:/cart?error=empty";
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("cartItems", cart);
+            model.addAttribute("total", calculateTotal(cart));
+            return "orders/checkout";
+        }
+
+        try {
+            // Преобразуем CartItem в OrderItemDTO
+            List<OrderItemDTO> orderItems = cart.stream()
+                    .map(cartItem -> OrderItemDTO.builder()
+                            .productId(cartItem.getProductId())
+                            .productName(cartItem.getProductName())
+                            .quantity(cartItem.getQuantity())
+                            .price(cartItem.getPrice())
+                            .build())
+                    .collect(Collectors.toList());
+
+            // Устанавливаем преобразованные items в DTO заказа
+            orderDTO.setItems(orderItems);
+
+            // Создаем заказ
+            Order order = orderService.create(orderDTO);
+
+            // Очищаем корзину после успешного оформления
+            session.removeAttribute(CART_SESSION_KEY);
+
+            return "redirect:/orders/confirmation/" + order.getId();
+
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error",
+                    "Произошла ошибка при оформлении заказа. Пожалуйста, попробуйте снова.");
+            redirectAttributes.addFlashAttribute("orderDTO", orderDTO);
+            return "redirect:/orders/checkout";
+        }
+    }
+
+    // Страница подтверждения заказа
+    @GetMapping("/confirmation/{orderId}")
+    public String showOrderConfirmation(@PathVariable Long orderId, Model model) {
+        try {
+            Order order = orderService.findById(orderId);
+            if (order == null) {
+                return "redirect:/orders?error=orderNotFound";
+            }
+
+            model.addAttribute("order", order);
+            return "orders/confirmation";
+        } catch (Exception e) {
+            log.error("Error showing order confirmation for orderId: " + orderId, e);
+            return "redirect:/orders?error=orderError";
+        }
+    }
+
+    // Метод для обработки ошибок
+    @ExceptionHandler(Exception.class)
+    public String handleError(Exception e, Model model) {
+        log.error("Error in OrderController", e);
+        model.addAttribute("error", "Произошла ошибка при обработке заказа");
+        return "error/order-error";
+    }
+
+
+    private boolean areAllProductsAvailable(List<CartItem> cart) {
+        return cart.stream()
+                .allMatch(item -> orderService.isProductAvailable(item.getProductId()));
+    }
+
+
+
+
+
 
     @PostMapping("/cart/add")
     public String addToCart(@RequestParam Long productId,
@@ -77,30 +211,29 @@ public class OrderController {
         return "cart/view";
     }
 
+    // Метод для обновления количества
     @PostMapping("/cart/update")
     public String updateCartItem(@RequestParam Long productId,
                                  @RequestParam Integer quantity,
-                                 HttpSession session,
-                                 Model model) {
-        ProductDto product = productService.findById(productId);
-        if (!product.isAvailable()) {
-            return "redirect:/cart?error=productNotAvailable";
-        }
+                                 HttpSession session) {
+        @SuppressWarnings("unchecked")
+        List<CartItem> cart = (List<CartItem>) session.getAttribute(CART_SESSION_KEY);
 
-        List<CartItem> cart = getCart(session);
+        if (cart != null) {
+            for (CartItem item : cart) {
+                if (Objects.equals(item.getProductId(), productId)) {
+                    item.setQuantity(quantity);
 
-        for (CartItem item : cart) {
-            if (Objects.equals(item.getProductId(), productId)) {
-                item.setQuantity(quantity);
-                item.setPrice(product.getPrice());
-                break;
+                    // Обновляем цену на случай изменений
+                    ProductDto product = productService.findById(productId);
+                    item.setPrice(product.getPrice());
+                    break;
+                }
             }
+            session.setAttribute(CART_SESSION_KEY, cart);
         }
 
-        session.setAttribute(CART_SESSION_KEY, cart);
-        updateCartCountInModel(session, model);  // Добавляем обновление счетчика
-
-        return "redirect:/cart";
+        return "redirect:/orders/cart";
     }
 
     @PostMapping("/cart/remove")
@@ -124,7 +257,7 @@ public class OrderController {
         model.addAttribute("cartCount", cartCount);
     }
 
-    // Остальные методы без изменений
+
     private List<CartItem> getCart(HttpSession session) {
         List<CartItem> cart = (List<CartItem>) session.getAttribute(CART_SESSION_KEY);
         if (cart == null) {

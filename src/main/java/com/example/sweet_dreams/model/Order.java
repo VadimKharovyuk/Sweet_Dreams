@@ -21,7 +21,7 @@ public class Order {
     private String customerPhone;
     private String deliveryAddress;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<OrderItem> items;
 
     private BigDecimal totalAmount;

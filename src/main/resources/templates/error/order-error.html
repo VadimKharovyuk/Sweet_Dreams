@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <link rel="stylesheet" th:href="@{/css/navigation.css}">
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ошибка заказа</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.css">
+</head>
+<body>
+<div th:replace="~{fragments/navigation :: navigation}"></div>
+
+<div class="ui container" style="margin-top: 50px;">
+  <div class="ui negative message">
+    <div class="header">Произошла ошибка</div>
+    <p th:text="${error}">Ошибка при обработке заказа</p>
+  </div>
+  <div style="margin-top: 20px;">
+    <a href="/orders" class="ui button">Вернуться к заказам</a>
+    <a href="/" class="ui primary button">На главную</a>
+  </div>
+</div>
+</body>
+</html>

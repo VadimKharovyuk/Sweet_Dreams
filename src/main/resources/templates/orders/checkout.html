@@ -1,10 +1,236 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оформление заказа</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.css">
+    <style>
+        .checkout-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .checkout-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .order-summary {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .form-error {
+            color: #dc2626;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .cart-items {
+            margin-bottom: 2rem;
+        }
+
+        .cart-item {
+            display: grid;
+            grid-template-columns: 3fr 1fr 1fr;
+            padding: 1rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-name {
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .item-quantity {
+            color: #6b7280;
+            text-align: center;
+        }
+
+        .item-price {
+            color: #374151;
+            text-align: right;
+            font-weight: 500;
+        }
+
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 1rem;
+            border-top: 2px solid #e5e7eb;
+            margin-top: 1rem;
+        }
+
+        .total-label {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .total-amount {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 1rem;
+            background-color: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .submit-button:hover {
+            background-color: #4f46e5;
+        }
+
+        @media (max-width: 768px) {
+            .checkout-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .checkout-container {
+                margin: 1rem auto;
+            }
+        }
+    </style>
 </head>
 <body>
+<div th:replace="~{fragments/navigation :: navigation}"></div>
 
+<div class="checkout-container">
+    <h1 class="text-3xl font-bold mb-6">Оформление заказа</h1>
+
+    <div class="checkout-grid">
+        <!-- Форма оформления заказа -->
+        <div class="checkout-form">
+            <h2 class="text-xl font-semibold mb-4">Данные доставки</h2>
+            <form th:action="@{/orders/checkout}" method="post" th:object="${orderDTO}">
+                <div class="form-group">
+                    <label class="form-label">Имя</label>
+                    <input type="text"
+                           th:field="*{customerName}"
+                           class="form-input"
+                           required>
+                    <div class="form-error"
+                         th:if="${#fields.hasErrors('customerName')}"
+                         th:errors="*{customerName}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email"
+                           th:field="*{customerEmail}"
+                           class="form-input"
+                           required>
+                    <div class="form-error"
+                         th:if="${#fields.hasErrors('customerEmail')}"
+                         th:errors="*{customerEmail}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Телефон</label>
+                    <input type="tel"
+                           th:field="*{customerPhone}"
+                           class="form-input"
+                           required>
+                    <div class="form-error"
+                         th:if="${#fields.hasErrors('customerPhone')}"
+                         th:errors="*{customerPhone}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Адрес доставки</label>
+                    <textarea th:field="*{deliveryAddress}"
+                              class="form-input"
+                              rows="3"
+                              required></textarea>
+                    <div class="form-error"
+                         th:if="${#fields.hasErrors('deliveryAddress')}"
+                         th:errors="*{deliveryAddress}">
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-button">
+                    Подтвердить заказ
+                </button>
+            </form>
+        </div>
+
+        <!-- Сводка заказа -->
+        <div class="order-summary">
+            <h2 class="text-xl font-semibold mb-4">Ваш заказ</h2>
+
+            <div class="cart-items">
+                <div class="cart-item" th:each="item : ${cartItems}">
+                    <div class="item-name" th:text="${item.productName}"></div>
+                    <div class="item-quantity" th:text="${item.quantity + ' шт.'}"></div>
+                    <div class="item-price"
+                         th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'COMMA', 2, 'POINT')} + ' UAH'">
+                    </div>
+                </div>
+            </div>
+
+            <div class="order-total">
+                <span class="total-label">Итого:</span>
+                <span class="total-amount"
+                      th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 2, 'POINT')} + ' UAH'">
+                    </span>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

@@ -6,8 +6,6 @@ import com.example.sweet_dreams.dto.product.ProductDto;
 import com.example.sweet_dreams.dto.product.ProductUpdateDto;
 import com.example.sweet_dreams.model.Product;
 import com.example.sweet_dreams.service.CategoryService;
-import com.example.sweet_dreams.service.ImageService;
-import com.example.sweet_dreams.service.MockMultipartFile;
 import com.example.sweet_dreams.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
