@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <link rel="stylesheet" th:href="@{/css/navigation.css}">
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Управління розсилкою - Адмін панель</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.css">
+  <style>
+    .newsletter-container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .form-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    textarea.form-control {
+      min-height: 300px;
+      resize: vertical;
+      font-family: monospace;
+      line-height: 1.5;
+    }
+
+    .error-message {
+      color: #dc2626;
+      margin-top: 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .success-message {
+      color: #059669;
+      margin-top: 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .preview-container {
+      margin-top: 2rem;
+      padding: 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+
+    .help-text {
+      margin-top: 0.5rem;
+      color: #6b7280;
+      font-size: 0.875rem;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .preview-button {
+      background-color: #6b7280;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .preview-button:hover {
+      background-color: #4b5563;
+    }
+
+    .submit-button {
+      background-color: #4f46e5;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .submit-button:hover {
+      background-color: #4338ca;
+    }
+  </style>
+</head>
+<body>
+<div th:replace="~{fragments/navigation :: navigation}"></div><br><br>
+
+<div class="newsletter-container">
+  <h1 class="ui header">Управління розсилкою</h1>
+
+  <div class="form-container">
+    <form th:action="@{/admin/newsletter/send}"
+          method="post"
+          th:object="${newsletterForm}"
+          class="ui form">
+
+      <!-- Сообщения об успехе/ошибке -->
+      <div th:if="${success}" class="ui success message" th:text="${success}"></div>
+      <div th:if="${error}" class="ui error message" th:text="${error}"></div>
+
+      <!-- Заголовок -->
+      <div class="form-group">
+        <label for="title">Заголовок розсилки</label>
+        <input type="text"
+               id="title"
+               th:field="*{title}"
+               class="form-control"
+               placeholder="Введіть заголовок розсилки">
+        <div class="error-message"
+             th:if="${#fields.hasErrors('title')}"
+             th:errors="*{title}">
+        </div>
+      </div>
+
+      <!-- Контент -->
+      <div class="form-group">
+        <label for="content">Текст розсилки</label>
+        <div class="help-text">
+          Ви можете використовувати HTML-теги для форматування тексту.
+          Наприклад: &lt;b&gt;жирний текст&lt;/b&gt;, &lt;i&gt;курсив&lt;/i&gt;
+        </div>
+        <textarea id="content"
+                  th:field="*{content}"
+                  class="form-control"
+                  placeholder="Введіть текст розсилки. Підтримується HTML-форматування."
+                  rows="15"></textarea>
+        <div class="error-message"
+             th:if="${#fields.hasErrors('content')}"
+             th:errors="*{content}">
+        </div>
+      </div>
+
+      <!-- Предпросмотр -->
+      <div id="preview" class="preview-container" style="display: none;">
+        <h3>Попередній перегляд</h3>
+        <div id="previewContent"></div>
+      </div>
+
+      <!-- Кнопки -->
+      <div class="button-group">
+        <button type="button"
+                class="preview-button"
+                onclick="showPreview()">
+          Попередній перегляд
+        </button>
+        <button type="submit" class="submit-button">
+          Відправити розсилку
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function showPreview() {
+    const title = document.getElementById('title').value;
+    const content = document.getElementById('content').value;
+    const preview = document.getElementById('preview');
+    const previewContent = document.getElementById('previewContent');
+
+    const emailTemplate = `
+                <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;">
+                    <div style="background-color: #4f46e5; color: white; padding: 20px; text-align: center;">
+                        <h2>${title}</h2>
+                    </div>
+                    <div style="padding: 20px;">
+                        ${content}
+                    </div>
+                    <div style="text-align: center; padding: 20px; color: #666;">
+                        <p>З повагою,<br>команда Sweet Dreams</p>
+                    </div>
+                </div>
+            `;
+
+    previewContent.innerHTML = emailTemplate;
+    preview.style.display = 'block';
+  }
+</script>
+</body>
+</html>
