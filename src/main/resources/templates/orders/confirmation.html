@@ -3,6 +3,9 @@
 <head>
     <link rel="stylesheet" th:href="@{/css/navigation.css}">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.js"></script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Заказ подтвержден</title>
@@ -197,12 +200,132 @@
             </div>
         </div>
     </div>
+    </div>
 
-    <div class="action-buttons">
-        <a href="/products" class="ui primary button">
-            Продолжить покупки
-        </a>
+<!-- Кнопки действий -->
+<div class="action-buttons">
+    <a href="/products" class="ui primary button">
+        Продолжить покупки
+    </a>
+    <!-- Отдельная кнопка для показа формы -->
+    <button type="button" class="ui secondary button" id="showEmailForm">
+        <i class="envelope icon"></i>
+        Отправить на email
+    </button>
+</div>
+
+<!-- Форма для отправки на email -->
+<div class="ui modal" id="emailModal">
+    <i class="close icon"></i>
+    <div class="header">
+        Отправить заказ на email
+    </div>
+    <div class="content">
+        <div class="ui form">
+            <div class="field">
+                <label>Введите email для отправки заказа</label>
+                <input type="email" id="emailInput" placeholder="example@email.com"
+                       th:value="${order.customerEmail}">
+            </div>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui black deny button">
+            Отмена
+        </div>
+        <div class="ui positive right labeled icon button" id="sendEmailButton">
+            Отправить
+            <i class="checkmark icon"></i>
+        </div>
     </div>
 </div>
+
+<!-- Уведомления -->
+<div class="ui success message" id="successMessage" style="display: none; position: fixed; top: 20px; right: 20px; z-index: 1000;">
+    <i class="close icon"></i>
+    <div class="header">Успешно</div>
+    <p>Заказ отправлен на указанный email</p>
+</div>
+
+<div class="ui error message" id="errorMessage" style="display: none; position: fixed; top: 20px; right: 20px; z-index: 1000;">
+    <i class="close icon"></i>
+    <div class="header">Ошибка</div>
+    <p>Произошла ошибка при отправке</p>
+</div>
+
+<!-- Скрипт для обработки -->
+<script th:inline="javascript">
+    $(document).ready(function() {
+        // Инициализация модального окна
+        const $modal = $('#emailModal').modal({
+            closable: false
+        });
+
+        // Показ формы
+        $('#showEmailForm').click(function() {
+            $modal.modal('show');
+        });
+
+        // Отправка email
+        $('#sendEmailButton').click(function() {
+            const email = $('#emailInput').val();
+            const orderId = [[${order.id}]];
+
+            if (!email) {
+                alert('Пожалуйста, введите email');
+                return;
+            }
+
+            if (!isValidEmail(email)) {
+                alert('Пожалуйста, введите корректный email');
+                return;
+            }
+
+            // Отправка запроса
+            fetch(`/sent/send-email/${orderId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: email })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    $modal.modal('hide');
+                    if (data.success) {
+                        showMessage('success');
+                    } else {
+                        showMessage('error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    $modal.modal('hide');
+                    showMessage('error');
+                });
+        });
+
+        // Вспомогательные функции
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function showMessage(type) {
+            const $message = type === 'success' ? $('#successMessage') : $('#errorMessage');
+            $message
+                .fadeIn()
+                .delay(3000)
+                .fadeOut();
+        }
+
+        // Закрытие уведомлений
+        $('.message .close').click(function() {
+            $(this).closest('.message').fadeOut();
+        });
+    });
+</script>
+
+
 </body>
+
 </html>
