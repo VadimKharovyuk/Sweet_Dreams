@@ -5,6 +5,7 @@ import com.example.sweet_dreams.exception.AdminAlreadyExistsException;
 import com.example.sweet_dreams.model.Admin;
 import com.example.sweet_dreams.repository.AdminRepository;
 import com.example.sweet_dreams.service.AdminService;
+import com.example.sweet_dreams.service.OrderService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,25 @@ public class AdminController {
 
     private final AdminService adminService;
     private final AdminRepository adminRepository;
+    private final OrderService orderService;
+
+@GetMapping("/orders")
+public String orders(Model model) {
+    model.addAttribute("orders", orderService.findAll());
+    return "admin/orders-list";
+}
+    @GetMapping("/dashboard")
+    public String dashboard(HttpSession session, Model model) {
+        // Проверяем, аутентифицирован ли админ
+        if (session.getAttribute("adminId") == null) {
+            return "redirect:/admin/login";
+        }
+
+        model.addAttribute("adminUsername", session.getAttribute("adminUsername"));
+        return "admin/dashboard";
+    }
+
+
 
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
@@ -77,15 +97,7 @@ public class AdminController {
         model.addAttribute("error", "Неверное имя пользователя или пароль");
         return "admin/login";
     }
-    @GetMapping("/dashboard")
-    public String dashboard(HttpSession session, Model model) {
-        // Проверяем, аутентифицирован ли админ
-        if (session.getAttribute("adminId") == null) {
-            return "redirect:/admin/login";
-        }
-        model.addAttribute("adminUsername", session.getAttribute("adminUsername"));
-        return "admin/dashboard";
-    }
+
 
     @PostMapping("/logout")
     public String logout(HttpSession session) {

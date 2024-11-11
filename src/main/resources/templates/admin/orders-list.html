@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <link rel="stylesheet" th:href="@{/css/navigation.css}">
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Управление заказами</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.css">
+  <style>
+    .orders-container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .orders-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .status-NEW { background-color: #3B82F6; color: white; }
+    .status-CONFIRMED { background-color: #10B981; color: white; }
+    .status-PREPARING { background-color: #F59E0B; color: white; }
+    .status-READY { background-color: #6366F1; color: white; }
+    .status-DELIVERING { background-color: #8B5CF6; color: white; }
+    .status-COMPLETED { background-color: #059669; color: white; }
+    .status-CANCELLED { background-color: #EF4444; color: white; }
+
+    .order-details {
+      display: none;
+      background: #f9fafb;
+      padding: 1rem;
+      margin: 0.5rem 0;
+      border-radius: 0.5rem;
+    }
+
+    .order-row:hover {
+      background-color: #f9fafb;
+      cursor: pointer;
+    }
+
+    .order-total {
+      font-weight: bold;
+      color: #059669;
+    }
+
+    .search-filters {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .table-header th {
+      position: sticky;
+      top: 0;
+      background: white;
+      z-index: 10;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+<div th:replace="~{fragments/navigation :: navigation}"></div>
+
+<div class="orders-container">
+  <div class="orders-header">
+    <h1 class="text-2xl font-bold">Управление заказами</h1>
+    <div class="search-filters">
+      <input type="text" id="searchInput" placeholder="Поиск по заказам..."
+             class="ui input">
+      <select class="ui dropdown" id="statusFilter">
+        <option value="">Все статусы</option>
+        <option th:each="status : ${T(com.example.sweet_dreams.model.Order.OrderStatus).values()}"
+                th:value="${status}"
+                th:text="${status.description}">
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div class="ui segment">
+    <table class="ui celled table">
+      <thead>
+      <tr class="table-header">
+        <th>ID</th>
+        <th>Дата</th>
+        <th>Клиент</th>
+        <th>Контакты</th>
+        <th>Адрес</th>
+        <th>Сумма</th>
+        <th>Статус</th>
+        <th>Действия</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="order : ${orders}" class="order-row"
+          th:data-order-id="${order.id}">
+        <td th:text="${'#' + order.id}"></td>
+        <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
+        <td th:text="${order.customerName}"></td>
+        <td>
+          <div th:text="${order.customerEmail}"></div>
+          <div th:text="${order.customerPhone}"></div>
+        </td>
+        <td th:text="${order.deliveryAddress}"></td>
+        <td class="order-total"
+            th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 2, 'POINT')} + ' UAH'">
+        </td>
+        <td>
+                            <span class="status-badge"
+                                  th:classappend="${'status-' + order.status}"
+                                  th:text="${order.status.description}">
+                            </span>
+        </td>
+        <td>
+          <div class="action-buttons">
+            <button class="ui tiny primary button show-details-btn">
+              Детали
+            </button>
+            <div class="ui tiny buttons">
+              <button class="ui button update-status-btn"
+                      th:if="${order.status != T(com.example.sweet_dreams.model.Order.OrderStatus).COMPLETED &&
+                                                    order.status != T(com.example.sweet_dreams.model.Order.OrderStatus).CANCELLED}">
+                Изменить статус
+              </button>
+              <button class="ui negative button cancel-order-btn"
+                      th:if="${order.status != T(com.example.sweet_dreams.model.Order.OrderStatus).COMPLETED &&
+                                                    order.status != T(com.example.sweet_dreams.model.Order.OrderStatus).CANCELLED}">
+                Отменить
+              </button>
+            </div>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Модальное окно для деталей заказа -->
+  <div class="ui modal" id="orderDetailsModal">
+    <i class="close icon"></i>
+    <div class="header">
+      Детали заказа <span id="modalOrderId"></span>
+    </div>
+    <div class="content">
+      <div id="orderDetailsContent"></div>
+    </div>
+  </div>
+
+  <!-- Модальное окно для изменения статуса -->
+  <div class="ui modal" id="updateStatusModal">
+    <i class="close icon"></i>
+    <div class="header">Изменить статус заказа</div>
+    <div class="content">
+      <select class="ui dropdown" id="newStatus">
+        <option th:each="status : ${T(com.example.sweet_dreams.model.Order.OrderStatus).values()}"
+                th:value="${status}"
+                th:text="${status.description}">
+        </option>
+      </select>
+    </div>
+    <div class="actions">
+      <div class="ui cancel button">Отмена</div>
+      <div class="ui positive button">Сохранить</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Инициализация Semantic UI компонентов
+  $('.ui.dropdown').dropdown();
+
+  // Поиск по таблице
+  $('#searchInput').on('keyup', function() {
+    let value = $(this).val().toLowerCase();
+    $('.order-row').filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+
+  // Фильтрация по статусу
+  $('#statusFilter').change(function() {
+    let status = $(this).val();
+    if (status) {
+      $('.order-row').hide();
+      $('.status-' + status).closest('tr').show();
+    } else {
+      $('.order-row').show();
+    }
+  });
+
+  // Показать детали заказа
+  $('.show-details-btn').click(function(e) {
+    e.stopPropagation();
+    let orderId = $(this).closest('tr').data('order-id');
+    // Здесь нужно добавить AJAX запрос для получения деталей заказа
+    $('#modalOrderId').text('#' + orderId);
+    $('#orderDetailsModal').modal('show');
+  });
+
+  // Изменение статуса заказа
+  $('.update-status-btn').click(function(e) {
+    e.stopPropagation();
+    let orderId = $(this).closest('tr').data('order-id');
+    $('#updateStatusModal')
+            .modal('setting', {
+              onApprove: function() {
+                let newStatus = $('#newStatus').val();
+                // Здесь нужно добавить AJAX запрос для обновления статуса
+              }
+            })
+            .modal('show');
+  });
+
+  // Отмена заказа
+  $('.cancel-order-btn').click(function(e) {
+    e.stopPropagation();
+    if (confirm('Вы уверены, что хотите отменить заказ?')) {
+      let orderId = $(this).closest('tr').data('order-id');
+      // Здесь нужно добавить AJAX запрос для отмены заказа
+    }
+  });
+</script>
+</body>
+</html>
