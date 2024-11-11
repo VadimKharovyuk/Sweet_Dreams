@@ -31,16 +31,6 @@ public class HomePage {
         return "home";
     }
 
-//    @GetMapping
-//    public String home(Model model) {
-//        // Получаем список категорий с продуктами
-//        List<CategoryWithProductsDto> categoriesWithProducts = categoryService.getAllCategoriesWithProducts();
-//
-//        // Добавляем в модель
-//        model.addAttribute("categories", categoriesWithProducts);
-//        model.addAttribute("listCategory", categoryService.getAllCategories()); // для навигации
-//
-//        return "home";
-//    }
+
 
 }

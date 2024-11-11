@@ -14,8 +14,6 @@ public class SweetDreamsApplication {
 
 
 
-    //Связаться с нами
-
     //фильтр по цене
 
     //По умолчанию
