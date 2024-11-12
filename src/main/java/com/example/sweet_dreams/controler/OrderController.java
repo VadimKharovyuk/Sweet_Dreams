@@ -155,8 +155,6 @@ public class OrderController {
 
 
 
-
-
     @PostMapping("/cart/add")
     public String addToCart(@RequestParam Long productId,
                             @RequestParam(defaultValue = "1") Integer quantity,
@@ -243,7 +241,7 @@ public class OrderController {
         session.setAttribute(CART_SESSION_KEY, cart);
         updateCartCountInModel(session, model);  // Добавляем обновление счетчика
 
-        return "redirect:/cart";
+        return "redirect:/orders/cart";
     }
 
     // Вспомогательный метод для обновления счетчика корзины
