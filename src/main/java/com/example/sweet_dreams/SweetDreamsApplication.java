@@ -23,15 +23,11 @@ public class SweetDreamsApplication {
     //По рейтингу
 
 
-    //Новостная рассылка
-
-    //поиск на отделную страницу
-
-
     //Политика возврата
 
 
     //избраное
 
 
+    //docker buildx build --platform linux/amd64 -t lucky1911/sweet_dreams:latest . --push
 }

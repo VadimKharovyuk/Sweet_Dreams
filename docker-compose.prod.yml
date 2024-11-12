@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  app:
+    image: lucky1911/sweet_dreams:latest
+    container_name: sweet_dreams_app
+    restart: unless-stopped
+    ports:
+      - "1001:1001"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://autorack.proxy.rlwy.net:20225/railway
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=ucboaXsYVcupKADZrmbfiwpnHOslPwjf
+      - PORT=1001
+      # Mail Configuration
+      - MAIL_HOST=smtp.gmail.com
+      - MAIL_PORT=587
+      - MAIL_USERNAME=vadimkh17@gmail.com
+      - MAIL_PASSWORD=vhif kghh ijvs duhz
+    networks:
+      - sweet_dreams_network
+
+networks:
+  sweet_dreams_network:
+    driver: bridge

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="Sweet Dreams - Магазин тортов на заказ">
     <meta name="keywords" content="торты, заказать торт, свадебные торты, детские торты">
     <meta property="og:title" content="Sweet Dreams - Магазин тортов">
@@ -705,6 +706,191 @@
 
         .btn-details:hover {
             background-color: var(--primary-dark);
+        }
+
+
+
+        /* Медиа-запросы для адаптивности */
+        @media (max-width: 768px) {
+            /* Навигация */
+            .navbar {
+                padding: 0.5rem 3%;
+                flex-wrap: wrap;
+            }
+
+            .nav-left {
+                gap: 1rem;
+                width: 100%;
+                justify-content: space-between;
+                margin-bottom: 0.5rem;
+            }
+
+            .nav-right {
+                width: 100%;
+                justify-content: space-between;
+                gap: 1rem;
+            }
+
+            .search-form {
+                flex: 1;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+
+            .search-input:focus {
+                width: 100%;
+            }
+
+            /* Видео секция */
+            .video-section {
+                height: 300px;
+                margin-top: 120px; /* Увеличен отступ из-за двухстрочной навигации */
+            }
+
+            /* Категории */
+            .categories {
+                padding: 2rem 3%;
+            }
+
+            .category-card {
+                flex: 0 0 250px;
+            }
+
+            .category-content {
+                padding: 1rem;
+            }
+
+            /* About section */
+            .about-section {
+                flex-direction: column;
+                padding: 2rem 3%;
+                gap: 2rem;
+            }
+
+            .about-image {
+                height: 300px;
+            }
+
+            .about-features {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            /* Full width image section */
+            .full-width-image {
+                height: 400px;
+            }
+
+            .full-width-content {
+                padding: 1rem;
+            }
+
+            .full-width-content h2 {
+                font-size: 1.8rem;
+            }
+
+            .full-width-content p {
+                font-size: 1rem;
+            }
+        }
+
+        /* Для очень маленьких экранов */
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 1.2rem;
+            }
+
+            .nav-link {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.9rem;
+            }
+
+            .admin {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.9rem;
+            }
+
+            .category-card {
+                flex: 0 0 200px;
+            }
+
+            .category-image {
+                height: 150px;
+            }
+
+            .category-title {
+                font-size: 1rem;
+            }
+
+            .about-content h2 {
+                font-size: 1.8rem;
+            }
+
+            .about-content p {
+                font-size: 0.9rem;
+            }
+
+            .feature-item {
+                font-size: 0.9rem;
+            }
+
+            .cta-button {
+                padding: 0.8rem 1.5rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Стили для выпадающего меню на мобильных */
+        @media (max-width: 768px) {
+            .nav-dropdown-content {
+                position: fixed;
+                top: auto;
+                left: 0;
+                right: 0;
+                width: 100%;
+                max-height: 300px;
+                overflow-y: auto;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+
+            .dropdown-item {
+                padding: 1rem;
+                border-bottom: 1px solid var(--gray-light);
+            }
+        }
+
+        /* Улучшения для touch-устройств */
+        @media (hover: none) {
+            .category-card:hover {
+                transform: none;
+            }
+
+            .product-image:hover {
+                transform: none;
+            }
+
+            .btn-details:active,
+            .cta-button:active {
+                transform: translateY(1px);
+            }
+        }
+
+        /* Оптимизация для landscape ориентации */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .video-section {
+                height: 200px;
+            }
+
+            .about-section {
+                flex-direction: row;
+                gap: 2rem;
+            }
+
+            .about-image {
+                height: 250px;
+            }
         }
 
     </style>

@@ -1,3 +1,4 @@
+/* Базовые стили */
 .navigation {
     background-color: #fff;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -7,6 +8,7 @@
     left: 0;
     right: 0;
     z-index: 1000;
+    height: auto;
 }
 
 .nav-container {
@@ -31,7 +33,7 @@
     margin: 0;
     padding: 0;
     gap: 2rem;
-    align-items: center; /* Добавлено для выравнивания корзины */
+    align-items: center;
 }
 
 .nav-links li a {
@@ -76,26 +78,131 @@
     font-weight: bold;
 }
 
+/* Добавляем отступ для основного контента */
+body {
+    padding-top: 80px;
+}
+
+/* Медиа-запросы для мобильных устройств */
 @media (max-width: 768px) {
+    body {
+        padding-top: 60px;
+    }
+
+    .navigation {
+        padding: 0.5rem 0;
+        height: auto;
+    }
+
     .nav-container {
-        flex-direction: column;
-        gap: 1rem;
+        padding: 0 1rem;
+        flex-direction: row;
+        flex-wrap: nowrap;
+    }
+
+    .logo a {
+        font-size: 1.2rem;
     }
 
     .nav-links {
-        flex-direction: column;
-        text-align: center;
-        gap: 1rem;
+        flex-direction: row;
+        gap: 0.5rem;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        padding: 0.5rem 0;
+        margin-left: 1rem;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
     }
 
-    /* Адаптивные стили для корзины */
+    .nav-links::-webkit-scrollbar {
+        display: none;
+    }
+
+    .nav-links li a {
+        font-size: 0.9rem;
+        padding: 0.5rem 0.8rem;
+    }
+
     .cart-icon {
-        margin: 0.5rem 0;
+        font-size: 1.3rem;
+        padding: 0.3rem;
+        margin-left: 0.5rem;
     }
 
     .cart-count {
-        position: absolute;
+        font-size: 0.7rem;
+        min-width: 16px;
+        height: 16px;
         top: -5px;
         right: -5px;
     }
+}
+
+/* Для очень маленьких экранов */
+@media (max-width: 480px) {
+    body {
+        padding-top: 50px;
+    }
+
+    .navigation {
+        padding: 0.3rem 0;
+    }
+
+    .nav-container {
+        padding: 0 0.5rem;
+    }
+
+    .logo a {
+        font-size: 1rem;
+    }
+
+    .nav-links {
+        gap: 0.3rem;
+    }
+
+    .nav-links li a {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.5rem;
+    }
+
+    .cart-icon {
+        font-size: 1.1rem;
+    }
+}
+
+/* Улучшения для touch-устройств */
+@media (hover: none) {
+    .nav-links li a:active,
+    .cart-icon:active {
+        color: #20B2AA;
+        opacity: 0.7;
+    }
+}
+
+/* Ориентация landscape */
+@media (max-width: 768px) and (orientation: landscape) {
+    body {
+        padding-top: 50px;
+    }
+
+    .navigation {
+        padding: 0.3rem 0;
+    }
+
+    .nav-container {
+        flex-wrap: nowrap;
+    }
+
+    .nav-links {
+        justify-content: flex-end;
+    }
+}
+
+/* Фиксированная навигация при скролле */
+.navigation.scrolled {
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    transition: background-color 0.3s ease;
 }

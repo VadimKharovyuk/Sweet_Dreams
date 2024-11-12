@@ -10,12 +10,11 @@
       <a href="/">Sweet Dreams</a>
     </div>
     <ul class="nav-links">
-      <li><a href="/">Главная</a></li>
       <li><a href="/products">Каталог</a></li>
       <li><a href="/about">О нас</a></li>
-      <li><a href="/contact">Контакты</a></li>
+      <li><a href="/contacts">Контакты</a></li>
       <li>
-        <a href="/cart" class="cart-icon" aria-label="Корзина">
+        <a href="/cart" class="cart-icon">
           🛒
           <span class="cart-count" th:text="${cartCount ?: 0}">0</span>
         </a>
@@ -23,6 +22,16 @@
     </ul>
   </div>
 </nav>
+<script>
+  document.addEventListener('scroll', () => {
+    const nav = document.querySelector('.navigation');
+    if (window.scrollY > 50) {
+      nav.classList.add('scrolled');
+    } else {
+      nav.classList.remove('scrolled');
+    }
+  });
+</script>
 </body>
 <script>
   // В файл navigation.js
