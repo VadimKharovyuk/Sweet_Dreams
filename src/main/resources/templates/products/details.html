@@ -324,6 +324,69 @@
     }
 
 
+/*написать отзыв кнопка*/
+    .btn-outline-primary {
+      /* Основные параметры */
+      display: inline-block;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 25px;
+
+      /* Текст */
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      text-align: center;
+
+      /* Градиентный фон */
+      background: linear-gradient(45deg, #0d6efd, #0099ff);
+
+      /* Анимация */
+      transition: all 0.3s ease;
+
+      /* Тень */
+      box-shadow: 0 4px 15px rgba(13, 110, 253, 0.2);
+
+      /* Курсор */
+      cursor: pointer;
+
+      /* Убираем подчеркивание ссылки */
+      text-decoration: none;
+
+      /* Позиционирование */
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-outline-primary:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 25px;
+      background: linear-gradient(45deg, #0099ff, #0d6efd);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: -1;
+    }
+
+    .btn-outline-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(13, 110, 253, 0.3);
+      color: white;
+    }
+
+    .btn-outline-primary:hover:before {
+      opacity: 1;
+    }
+
+    .btn-outline-primary:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 15px rgba(13, 110, 253, 0.2);
+    }
   </style>
 </head>
 <body>
@@ -349,6 +412,10 @@
       <div class="rating-section">
         <span class="rating-value" th:text="${#numbers.formatDecimal(product.averageRating, 1, 1)} + '★'"></span>
         <span class="reviews-count" th:text="'(' + ${product.reviewsCount} + ' отзывов)'"></span>
+        <a th:href="@{/products/{id}/reviews(id=${product.id})}"
+           class="btn btn-outline-primary">
+          Написать отзыв
+        </a>
       </div>
 
       <!-- Основная информация -->

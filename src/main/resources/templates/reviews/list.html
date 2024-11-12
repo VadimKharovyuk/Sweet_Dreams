@@ -3,6 +3,8 @@
 <head>
   <title th:text="${product.name + ' - Отзывы'}">Отзывы о продукте</title>
   <meta charset="UTF-8">
+  <link rel="stylesheet" th:href="@{/css/footer.css}">
+  <link rel="stylesheet" th:href="@{/css/navigation.css}">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -11,12 +13,12 @@
       color: #ffd700;
     }
     .product-image-section {
-      max-width: 300px;
+      max-width: 400px;
       margin: 0 auto 2rem auto;
     }
     .product-image {
       width: 100%;
-      height: 300px;
+      height: 400px;
       object-fit: cover;
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -68,6 +70,8 @@
   </style>
 </head>
 <body>
+<!-- Подключаем навигацию -->
+<div th:replace="~{fragments/navigation :: navigation}"></div><br><br>
 <div class="container py-4">
   <!-- Product Header -->
   <div class="mb-4">
@@ -202,6 +206,7 @@
     </div>
   </div>
 </div>
+<div th:replace="~{fragments/footer :: footer}"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 <script>
