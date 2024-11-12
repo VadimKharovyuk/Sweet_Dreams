@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" th:href="@{/css/footer.css}">
+</head>
+<body>
+<footer th:fragment="footer" class="footer">
+  <div class="footer-container">
+    <div class="footer-section">
+      <h3>Про нас</h3>
+      <p>Sweet Dreams - ваша кондитерська мрія. Ми створюємо неповторні десерти для ваших особливих моментів.</p>
+    </div>
+
+    <div class="footer-section">
+      <h3>Контакти</h3>
+      <p>Телефон: +380 99 999 99 99</p>
+      <p>Email: info@sweetdreams.com</p>
+      <p>Адреса: вул. Солодка, 123</p>
+    </div>
+
+    <div class="footer-section">
+      <h3>Години роботи</h3>
+      <p>Пн-Пт: 9:00 - 20:00</p>
+      <p>Сб-Нд: 10:00 - 18:00</p>
+    </div>
+
+    <div class="footer-section">
+      <h3>Соціальні мережі</h3>
+      <div class="social-links">
+        <a href="#" class="social-link">Facebook</a>
+        <a href="#" class="social-link">Instagram</a>
+        <a href="#" class="social-link">Telegram</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; 2024 Sweet Dreams. Всі права захищені.</p>
+  </div>
+</footer>
+</body>
+</html>
+
+
+
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Title</title>-->
+<!--</head>-->
+<!--<body>-->
+
+<!--&lt;!&ndash; Футер &ndash;&gt;-->
+<!--<footer class="footer">-->
+<!--  <div class="footer-content">-->
+<!--    &lt;!&ndash; Адрес &ndash;&gt;-->
+<!--    <div class="footer-column">-->
+<!--      <h3>Адреса</h3>-->
+<!--      <p>вул. Шевченка, буд. 10</p>-->
+<!--      <p>Київ, 01001</p>-->
+<!--      <p>Україна</p>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Контакты &ndash;&gt;-->
+<!--    <div class="footer-column">-->
+<!--      <h3>Контакти</h3>-->
+<!--      <p>Тел: +380 (99) 123-45-67</p>-->
+<!--      <p>Email: info@sweetdreams.ua</p>-->
+<!--      <p>Години роботи: 9:00 - 21:00</p>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Навигация &ndash;&gt;-->
+<!--    <div class="footer-column">-->
+<!--      <h3>Про нас</h3>-->
+<!--      <div class="footer-links">-->
+<!--        <a href="/about">Про компанію</a>-->
+<!--        <a href="/delivery">Доставка</a>-->
+<!--        <a href="/faq">FAQ</a>-->
+<!--        <a href="/contact">Контакти</a>-->
+<!--      </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Форма подписки &ndash;&gt;-->
+<!--    <div class="footer-column subscription-column">-->
+<!--      <div class="subscription-form">-->
+<!--        <h3>Підписатися на розсилку</h3>-->
+<!--        <form th:action="@{/subscription/subscribe}" method="post">-->
+<!--          <div class="subscription-input-group">-->
+<!--            <input type="email"-->
+<!--                   name="email"-->
+<!--                   placeholder="Введіть ваш email"-->
+<!--                   required>-->
+<!--            <button type="submit">Підписатися</button>-->
+<!--          </div>-->
+<!--        </form>-->
+<!--        <div th:if="${success}" class="subscription-message success" th:text="${success}"></div>-->
+<!--        <div th:if="${error}" class="subscription-message error" th:text="${error}"></div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</footer>-->
+<!--</body>-->
+<!--</html>-->

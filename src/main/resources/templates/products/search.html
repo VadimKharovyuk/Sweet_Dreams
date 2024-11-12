@@ -5,6 +5,7 @@
     <title>Результати пошуку</title>
     <link rel="stylesheet" th:href="@{/css/navigation.css}">
     <link rel="stylesheet" th:href="@{/css/search.css}">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
 </head>
 <body>
 <!-- Подключаем навигацию -->
@@ -99,5 +100,6 @@
         </ul>
     </aside>
 </div>
+<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

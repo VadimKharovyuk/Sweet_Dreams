@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 
   <link rel="stylesheet" th:href="@{/css/navigation.css}">
-  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <link rel="stylesheet" th:href="@{/css/footer.css}">
   <title th:text="${product.name} + ' - Sweet Dreams'"></title>
   <style>
     :root {
@@ -250,5 +250,6 @@
     </div>
   </div>
 </div>
+<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>
