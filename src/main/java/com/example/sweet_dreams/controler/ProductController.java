@@ -24,9 +24,9 @@ public class ProductController {
 
     @GetMapping
     public String showProducts(Model model) {
-        List<ProductListDto> products = productService.getAllAvailableProducts();
-        List<CategoryDto> categories = categoryService.getAllCategories();
 
+        List<CategoryDto> categories = categoryService.getAllCategories();
+        List<ProductListDto> products = productService.getAllAvailableProducts();
         model.addAttribute("products", products);
         model.addAttribute("categories", categories);
         return "products/catalog";
