@@ -1,4 +1,4 @@
-package com.example.sweet_dreams.dto;
+package com.example.sweet_dreams.dto.subscription;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

@@ -19,7 +19,6 @@ public interface ProductService {
     void toggleProductAvailability(Long id);
 
     List<ProductListDto> getAllAvailableProducts();
-
     ProductDto findById(Long productId);
 
 }

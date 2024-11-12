@@ -1,6 +1,6 @@
 package com.example.sweet_dreams.controler;
 
-import com.example.sweet_dreams.dto.NewsletterForm;
+import com.example.sweet_dreams.dto.subscription.NewsletterForm;
 import com.example.sweet_dreams.service.EmailService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

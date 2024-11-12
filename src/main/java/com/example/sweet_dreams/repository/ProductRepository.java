@@ -12,8 +12,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByNameContainingIgnoreCase(String keyword);
 
     List<Product> findByAvailableTrue();
-
-
     List<Product> findTop4ByCategoryIdAndAvailableTrueOrderByCreatedAtDesc(Long id);
+
+
 
 }

@@ -729,9 +729,9 @@
         </div>
     </div>
     <div class="nav-right">
-        <form class="search-form">
-            <input type="hidden" name="_csrf" value="${_csrf.token}">
-            <input type="search" class="search-input" placeholder="Пошук тортів...">
+        <form class="search-form" action="/search" method="GET">
+            <input type="search" name="keyword" class="search-input"
+                   placeholder="Пошук тортів..." th:value="${keyword}">
         </form>
         <a href="/orders/cart" class="cart-icon" aria-label="Кошик">
             🛒

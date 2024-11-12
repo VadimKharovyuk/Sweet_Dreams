@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Результати пошуку</title>
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
+    <link rel="stylesheet" th:href="@{/css/search.css}">
+</head>
+<body>
+<!-- Подключаем навигацию -->
+<div th:replace="~{fragments/navigation :: navigation}"></div><br><br><br>
+
+<div class="page-layout">
+    <!-- Левая колонка с фильтрами -->
+    <aside class="filters-sidebar">
+        <div class="filters-container">
+            <h3>Фільтри</h3>
+            <div class="filter-section">
+                <h4>Ціна</h4>
+                <div class="price-range">
+                    <input type="number" placeholder="Від" class="price-input">
+                    <input type="number" placeholder="До" class="price-input">
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <h4>Категорії</h4>
+                <div class="categories-list">
+                    <label class="checkbox-label">
+                        <input type="checkbox"> Торти
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox"> Десерти
+                    </label>
+                    <!-- Добавьте другие категории -->
+                </div>
+            </div>
+
+            <button class="apply-filters">Застосувати фільтри</button>
+        </div>
+    </aside>
+
+    <!-- Центральная колонка с результатами -->
+    <main class="search-results">
+        <h2>Результати пошуку для: <span th:text="${keyword}"></span></h2>
+        <p class="results-count" th:text="'Знайдено товарів: ' + ${products.size()}"></p>
+
+        <!-- Показываем сообщение, если ничего не найдено -->
+        <div th:if="${products.empty}" class="no-results">
+            <p>За вашим запитом нічого не знайдено</p>
+            <a href="/" class="btn btn-primary">Повернутися на головну</a>
+        </div>
+
+        <!-- Показываем результаты поиска -->
+        <div th:unless="${products.empty}" class="products-grid">
+            <div th:each="product : ${products}" class="product-card">
+                <div class="product-image-container">
+                    <img th:if="${product.mainImageBase64}"
+                         th:src="@{'data:image/jpeg;base64,' + ${product.mainImageBase64}}"
+                         class="product-image"
+                         th:alt="${product.name}">
+                </div>
+                <div class="product-info">
+                    <h3 th:text="${product.name}" class="product-name"></h3>
+                    <p th:text="${product.description}" class="product-description"></p>
+                    <p class="product-price">
+                        Ціна: <span th:text="${product.price}"></span> грн
+                    </p>
+                    <form th:action="@{/orders/cart/add}" method="post">
+                        <input type="hidden" name="productId" th:value="${product.id}" />
+                        <button type="submit" class="btn btn-primary">Добавить в корзину</button>
+                    </form>
+                    <a th:href="@{/products/{id}(id=${product.id})}"
+                       class="btn-details">
+                        Подробнее
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Правая колонка с видео -->
+    <aside class="sidebar">
+        <ul class="category-list">
+            <li>
+                <a href="/products"
+                   class="category-link"
+                   th:classappend="${selectedCategoryId == null ? 'active' : ''}">
+                    Все торты
+                </a>
+            </li>
+            <li th:each="category : ${categories}">
+                <a th:href="@{/products/category/{id}(id=${category.id})}"
+                   class="category-link"
+                   th:classappend="${category.id == selectedCategoryId ? 'active' : ''}"
+                   th:text="${category.name}">
+                </a>
+            </li>
+        </ul>
+    </aside>
+</div>
+</body>
+</html>
