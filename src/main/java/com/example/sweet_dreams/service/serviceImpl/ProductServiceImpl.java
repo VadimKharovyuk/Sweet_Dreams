@@ -1,9 +1,6 @@
 package com.example.sweet_dreams.service.serviceImpl;
 
-import com.example.sweet_dreams.dto.product.ProductCreateDto;
-import com.example.sweet_dreams.dto.product.ProductDto;
-import com.example.sweet_dreams.dto.product.ProductListDto;
-import com.example.sweet_dreams.dto.product.ProductUpdateDto;
+import com.example.sweet_dreams.dto.product.*;
 import com.example.sweet_dreams.exception.CategoryNotFoundException;
 import com.example.sweet_dreams.exception.ProductCreationException;
 import com.example.sweet_dreams.exception.ProductNotFoundException;
@@ -15,6 +12,7 @@ import com.example.sweet_dreams.service.ImageService;
 import com.example.sweet_dreams.service.ProductService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -95,6 +93,7 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.toDto(product);
     }
 
+
     @Override
     public void deleteProduct(Long id) {
         if (!productRepository.existsById(id)) {
@@ -130,13 +129,48 @@ public class ProductServiceImpl implements ProductService {
         productRepository.save(product);
     }
 
-
-
-
-
     private void validateCategory(Long categoryId) {
         if (!categoryRepository.existsById(categoryId)) {
             throw new CategoryNotFoundException("Категория не найдена с id: " + categoryId);
         }
     }
+
+
+
+
+    @Override
+    public Page<ProductDto> findWithFilters(ProductFilterDto filterDto, int page, int size) {
+        Sort sort = createSort(filterDto.getSortBy(), filterDto.getSortDirection());
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Product> products = productRepository.findWithFilters2(
+                filterDto.getCategoryId(),
+                filterDto.getMinPrice(),
+                filterDto.getMaxPrice(),
+                filterDto.getMinRating(),
+                pageable
+        );
+
+        return products.map(productMapper::toDto);
+    }
+
+
+
+    private Sort createSort(String sortBy, String sortDirection) {
+        // Исправлено: используем правильный импорт Sort.Direction
+        Sort.Direction direction = sortDirection.equalsIgnoreCase("desc") ?
+                Sort.Direction.DESC : Sort.Direction.ASC;
+
+        String sortField = switch (sortBy) {
+            case "price" -> "price";
+            case "rating" -> "averageRating";
+            default -> "id";
+        };
+
+        return Sort.by(direction, sortField);
+    }
+
+
+
+
 }

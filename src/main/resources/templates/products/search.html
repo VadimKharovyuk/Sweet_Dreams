@@ -14,31 +14,70 @@
 <div class="page-layout">
     <!-- Левая колонка с фильтрами -->
     <aside class="filters-sidebar">
-        <div class="filters-container">
-            <h3>Фільтри</h3>
-            <div class="filter-section">
-                <h4>Ціна</h4>
-                <div class="price-range">
-                    <input type="number" placeholder="Від" class="price-input">
-                    <input type="number" placeholder="До" class="price-input">
-                </div>
-            </div>
+        <form id="filterForm" th:action="@{/filter}" method="get">
+            <div class="filters-container">
+                <h3>Фільтри</h3>
 
-            <div class="filter-section">
-                <h4>Категорії</h4>
-                <div class="categories-list">
-                    <label class="checkbox-label">
-                        <input type="checkbox"> Торти
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox"> Десерти
-                    </label>
-                    <!-- Добавьте другие категории -->
+                <!-- Фильтр по цене -->
+                <div class="filter-section">
+                    <h4>Ціна</h4>
+                    <div class="price-range">
+                        <input type="number" name="minPrice" th:value="${currentFilters?.minPrice}"
+                               placeholder="Від" class="price-input">
+                        <input type="number" name="maxPrice" th:value="${currentFilters?.maxPrice}"
+                               placeholder="До" class="price-input">
+                    </div>
                 </div>
-            </div>
 
-            <button class="apply-filters">Застосувати фільтри</button>
-        </div>
+                <!-- Фильтр по категориям -->
+                <div class="filter-section">
+                    <h4>Категорії</h4>
+                    <div class="categories-list">
+                        <div th:each="category : ${categories}" class="checkbox-label">
+                            <input type="checkbox" name="categoryId"
+                                   th:value="${category.id}"
+                                   th:checked="${category.id == selectedCategoryId}">
+                            <span th:text="${category.name}"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Фильтр по рейтингу -->
+                <div class="filter-section">
+                    <h4>Рейтинг</h4>
+                    <select name="minRating" class="rating-select">
+                        <option value="">Всі рейтинги</option>
+                        <option value="4" th:selected="${currentFilters?.minRating == 4}">4+ зірки</option>
+                        <option value="3" th:selected="${currentFilters?.minRating == 3}">3+ зірки</option>
+                        <option value="2" th:selected="${currentFilters?.minRating == 2}">2+ зірки</option>
+                        <option value="1" th:selected="${currentFilters?.minRating == 1}">1+ зірка</option>
+                    </select>
+                </div>
+
+                <!-- Сортировка -->
+                <div class="filter-section">
+                    <h4>Сортування</h4>
+                    <select name="sortBy" class="sort-select">
+                        <option value="price" th:selected="${currentFilters?.sortBy == 'price'}">За ціною</option>
+                        <option value="rating" th:selected="${currentFilters?.sortBy == 'rating'}">За рейтингом</option>
+                    </select>
+                    <select name="sortDirection" class="sort-direction-select">
+                        <option value="asc" th:selected="${currentFilters?.sortDirection == 'asc'}">За зростанням</option>
+                        <option value="desc" th:selected="${currentFilters?.sortDirection == 'desc'}">За спаданням</option>
+                    </select>
+                </div>
+
+                <!-- Пагинация (скрытые поля) -->
+                <input type="hidden" name="page" th:value="${currentPage}">
+                <input type="hidden" name="size" value="10">
+
+                <!-- Сохраняем keyword если он есть -->
+                <input type="hidden" name="keyword" th:value="${keyword}">
+
+                <button type="submit" class="apply-filters">Застосувати фільтри</button><br><br>
+                <a href="/filter" class="reset-filters">Скинути фільтри</a>
+            </div>
+        </form>
     </aside>
 
     <!-- Центральная колонка с результатами -->
@@ -76,6 +115,24 @@
                         Подробнее
                     </a>
                 </div>
+            </div>
+        </div>
+        <!-- Пагинация -->
+        <div class="pagination" th:if="${totalPages > 1}">
+            <div class="pagination-container">
+                <a th:if="${currentPage > 0}"
+                   th:href="@{/filter(page=${currentPage - 1}, size=10, minPrice=${currentFilters?.minPrice}, maxPrice=${currentFilters?.maxPrice}, categoryId=${currentFilters?.categoryId}, minRating=${currentFilters?.minRating}, sortBy=${currentFilters?.sortBy}, sortDirection=${currentFilters?.sortDirection}, keyword=${keyword})}"
+                   class="pagination-link">&laquo; Попередня</a>
+
+                <span th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}">
+            <a th:href="@{/filter(page=${pageNum}, size=10, minPrice=${currentFilters?.minPrice}, maxPrice=${currentFilters?.maxPrice}, categoryId=${currentFilters?.categoryId}, minRating=${currentFilters?.minRating}, sortBy=${currentFilters?.sortBy}, sortDirection=${currentFilters?.sortDirection}, keyword=${keyword})}"
+               th:text="${pageNum + 1}"
+               th:class="${pageNum == currentPage} ? 'pagination-link active' : 'pagination-link'"></a>
+        </span>
+
+                <a th:if="${currentPage < totalPages - 1}"
+                   th:href="@{/filter(page=${currentPage + 1}, size=10, minPrice=${currentFilters?.minPrice}, maxPrice=${currentFilters?.maxPrice}, categoryId=${currentFilters?.categoryId}, minRating=${currentFilters?.minRating}, sortBy=${currentFilters?.sortBy}, sortDirection=${currentFilters?.sortDirection}, keyword=${keyword})}"
+                   class="pagination-link">Наступна &raquo;</a>
             </div>
         </div>
     </main>

@@ -1,10 +1,8 @@
 package com.example.sweet_dreams.service;
 
-import com.example.sweet_dreams.dto.product.ProductCreateDto;
-import com.example.sweet_dreams.dto.product.ProductDto;
-import com.example.sweet_dreams.dto.product.ProductListDto;
-import com.example.sweet_dreams.dto.product.ProductUpdateDto;
+import com.example.sweet_dreams.dto.product.*;
 import com.example.sweet_dreams.model.Product;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -20,5 +18,7 @@ public interface ProductService {
 
     List<ProductListDto> getAllAvailableProducts();
     ProductDto findById(Long productId);
+
+    Page<ProductDto> findWithFilters(ProductFilterDto productFilterDto, int page, int size);
 
 }
