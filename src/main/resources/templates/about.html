@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Про компанію Sweet Dreams</title>
+
+  <link rel="stylesheet" th:href="@{/css/navigation.css}">
+  <link rel="stylesheet" th:href="@{/css/footer.css}">
+  <link rel="stylesheet" th:href="@{/css/about.css}">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+</head>
+<body>
+<div th:replace="~{fragments/navigation :: navigation}"></div>
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="container">
+    <h1 class="hero-title">Sweet Dreams</h1>
+    <p class="hero-subtitle">Створюємо солодкі моменти вашого життя з 2015 року</p>
+  </div>
+</section>
+
+<!-- Story Section -->
+<section class="story-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 mx-auto">
+        <div class="story-card">
+          <h2 class="mb-4">Наша історія</h2>
+          <p>Все почалося з маленької сімейної кондитерської у 2015 році. Ми почали з простого бажання - створювати не просто торти, а справжні витвори мистецтва, які роблять особливі моменти життя ще більш незабутніми.</p>
+          <p>З роками наша пристрасть до кондитерського мистецтва тільки зростала. Ми постійно вдосконалювали рецепти, експериментували з новими смаками та дизайном, прислухаючись до побажань наших клієнтів.</p>
+        </div>
+
+        <div class="story-card">
+          <h2 class="mb-4">Наша місія</h2>
+          <p>Ми прагнемо створювати не просто десерти, а справжні емоції. Кожен наш торт - це історія, розказана через смак, дизайн та любов до своєї справи. Ми віримо, що солодощі мають силу об'єднувати людей та створювати незабутні моменти.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Section -->
+<aside class="stats-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3 col-6 mb-4">
+        <div class="stat-card">
+          <div class="stat-number">2,300+</div>
+          <div class="stat-label">Створених тортів</div>
+        </div>
+      </div>
+      <div class="col-md-3 col-6 mb-4">
+        <div class="stat-card">
+          <div class="stat-number">2,000+</div>
+          <div class="stat-label">Щасливих клієнтів</div>
+        </div>
+      </div>
+      <div class="col-md-3 col-6 mb-4">
+        <div class="stat-card">
+          <div class="stat-number">50+</div>
+          <div class="stat-label">Унікальних рецептів</div>
+        </div>
+      </div>
+      <div class="col-md-3 col-6 mb-4">
+        <div class="stat-card">
+          <div class="stat-number">8</div>
+          <div class="stat-label">Років досвіду</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- Values Section -->
+<section class="value-section">
+  <div class="container">
+    <h2 class="text-center mb-5">Наші цінності</h2>
+    <div class="row">
+      <div class="col-md-4 mb-4">
+        <div class="value-card">
+          <i class="fas fa-heart value-icon"></i>
+          <h3>Якість</h3>
+          <p>Використовуємо тільки найкращі інгредієнти та дотримуємося найвищих стандартів якості</p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="value-card">
+          <i class="fas fa-star value-icon"></i>
+          <h3>Інновації</h3>
+          <p>Постійно розвиваємося та впроваджуємо нові рецепти та дизайни</p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="value-card">
+          <i class="fas fa-smile value-icon"></i>
+          <h3>Клієнтоорієнтованість</h3>
+          <p>Кожен клієнт особливий, і ми прагнемо перевершити всі очікування</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Анимация чисел при скролле
+  function animateNumbers() {
+    const stats = document.querySelectorAll('.stat-number');
+    stats.forEach(stat => {
+      const target = parseInt(stat.innerText);
+      let current = 0;
+      const increment = target / 100;
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+          clearInterval(timer);
+          current = target;
+        }
+        stat.innerText = Math.floor(current) + '+';
+      }, 10);
+    });
+  }
+
+  // Запуск анимации при загрузке страницы
+  window.addEventListener('load', animateNumbers);
+</script>
+</body>
+</html>

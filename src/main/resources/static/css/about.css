@@ -1,0 +1,354 @@
+:root {
+    --primary-light: #ffd6e6;
+    --secondary-light: #f0f7ff;
+    --accent-light: #e6ffe6;
+    --text-primary: #2c3e50;
+    --text-secondary: #7f8c8d;
+    --border-light: #eaeaea;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: var(--text-primary);
+}
+
+.hero-section {
+    background: linear-gradient(to right, var(--primary-light), var(--secondary-light));
+    padding: 6rem 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+    animation: fadeInUp 1s ease;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    animation: fadeInUp 1s ease 0.3s;
+    animation-fill-mode: both;
+}
+
+.story-section {
+    padding: 5rem 0;
+    background-color: #fff;
+}
+
+.story-card {
+    background: #fff;
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease;
+}
+
+.story-card:hover {
+    transform: translateY(-5px);
+}
+
+.stats-section {
+    background: var(--accent-light);
+    padding: 3rem 0;
+    position: sticky;
+    top: 0;
+}
+
+.stat-card {
+    text-align: center;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.03);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+.value-section {
+    padding: 5rem 0;
+    background: #fff;
+}
+
+.value-card {
+    text-align: center;
+    padding: 2rem;
+}
+
+.value-icon {
+    font-size: 2.5rem;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Медиа-запросы */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .story-section {
+        padding: 3rem 0;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+    }
+}
+/* Добавьте эти стили в ваш существующий <style> блок */
+
+/* Планшеты и небольшие ноутбуки */
+@media (max-width: 992px) {
+    .hero-section {
+        padding: 4rem 0;
+    }
+
+    .hero-title {
+        font-size: 3rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
+
+    .story-section {
+        padding: 4rem 0;
+    }
+
+    .story-card {
+        padding: 1.5rem;
+    }
+
+    .value-card {
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        padding: 1.5rem;
+    }
+}
+
+/* Мобильные устройства */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 3rem 0;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+        padding: 0 1rem;
+    }
+
+    .story-section {
+        padding: 2rem 0;
+    }
+
+    .story-card {
+        padding: 1.2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .story-card h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .stats-section {
+        padding: 2rem 0;
+        position: relative; /* Убираем sticky на мобильных */
+    }
+
+    .stat-card {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .stat-number {
+        font-size: 1.8rem;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+    }
+
+    .value-section {
+        padding: 3rem 0;
+    }
+
+    .value-section h2 {
+        font-size: 1.8rem;
+        margin-bottom: 2rem;
+    }
+
+    .value-card {
+        padding: 1.5rem 1rem;
+    }
+
+    .value-icon {
+        font-size: 2rem;
+    }
+
+    .value-card h3 {
+        font-size: 1.3rem;
+    }
+
+    .value-card p {
+        font-size: 0.9rem;
+    }
+}
+
+/* Маленькие мобильные устройства */
+@media (max-width: 576px) {
+    .hero-section {
+        padding: 2rem 0;
+    }
+
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .hero-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .story-card {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .story-card h2 {
+        font-size: 1.3rem;
+    }
+
+    .story-card p {
+        font-size: 0.9rem;
+    }
+
+    .stat-card {
+        padding: 0.8rem;
+    }
+
+    .stat-number {
+        font-size: 1.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+    }
+
+    .value-section h2 {
+        font-size: 1.5rem;
+    }
+
+    .value-card {
+        padding: 1rem;
+    }
+
+    .value-icon {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .value-card h3 {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .value-card p {
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+
+    /* Улучшаем отступы в сетке на маленьких экранах */
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .row {
+        margin-left: -10px;
+        margin-right: -10px;
+    }
+
+    .col-6, .col-md-3, .col-md-4, .col-md-8 {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+}
+
+/* Специальные стили для ландшафтной ориентации */
+@media (max-height: 576px) and (orientation: landscape) {
+    .hero-section {
+        padding: 2rem 0;
+    }
+
+    .hero-title {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .stats-section {
+        position: relative;
+    }
+}
+
+/* Улучшения для устройств с высоким DPI */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .hero-section {
+        background: linear-gradient(to right,
+        var(--primary-light) 0%,
+        var(--secondary-light) 100%);
+    }
+}
+
+/* Улучшения для touch-устройств */
+@media (hover: none) {
+    .story-card:hover {
+        transform: none;
+    }
+
+    .story-card:active {
+        transform: scale(0.98);
+    }
+
+    .value-card {
+        transition: none;
+    }
+}
+
+/* Предотвращение дрожания на iOS */
+@supports (-webkit-overflow-scrolling: touch) {
+    .hero-section {
+        background-attachment: scroll;
+    }
+}

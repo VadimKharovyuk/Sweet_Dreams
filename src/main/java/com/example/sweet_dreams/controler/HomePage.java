@@ -45,4 +45,10 @@ public class HomePage {
     }
 
 
+    @GetMapping("/about")
+    public String about(Model model) {
+        return "about";
+    }
+
+
 }
