@@ -2,7 +2,7 @@ package com.example.sweet_dreams.controler;
 
 import com.example.sweet_dreams.dto.message.ContactMessageDto;
 import com.example.sweet_dreams.model.ContactMessage;
-import com.example.sweet_dreams.service.ContactMessageService;
+import com.example.sweet_dreams.service.serviceImpl.ContactMessageService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

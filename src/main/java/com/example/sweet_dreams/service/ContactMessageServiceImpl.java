@@ -1,10 +1,10 @@
-package com.example.sweet_dreams.service.serviceImpl;
+package com.example.sweet_dreams.service;
 
 import com.example.sweet_dreams.dto.message.ContactMessageDto;
 import com.example.sweet_dreams.maper.ContactMessageMapper;
 import com.example.sweet_dreams.model.ContactMessage;
 import com.example.sweet_dreams.repository.ContactMessageRepository;
-import com.example.sweet_dreams.service.ContactMessageService;
+import com.example.sweet_dreams.service.serviceImpl.ContactMessageService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

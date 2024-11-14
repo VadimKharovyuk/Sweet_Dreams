@@ -1,4 +1,4 @@
-package com.example.sweet_dreams.service.serviceImpl;
+package com.example.sweet_dreams.service;
 
 import com.example.sweet_dreams.dto.order.OrderDTO;
 import com.example.sweet_dreams.dto.order.OrderItemDTO;
@@ -8,7 +8,7 @@ import com.example.sweet_dreams.model.OrderItem;
 import com.example.sweet_dreams.model.Product;
 import com.example.sweet_dreams.repository.OrderRepository;
 import com.example.sweet_dreams.repository.ProductRepository;
-import com.example.sweet_dreams.service.OrderService;
+import com.example.sweet_dreams.service.serviceImpl.OrderService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service

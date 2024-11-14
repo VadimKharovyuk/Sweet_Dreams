@@ -1,4 +1,4 @@
-package com.example.sweet_dreams.service;
+package com.example.sweet_dreams.service.serviceImpl;
 
 import com.example.sweet_dreams.dto.review.ReviewCreateDto;
 import com.example.sweet_dreams.dto.review.ReviewDto;

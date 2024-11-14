@@ -5,8 +5,8 @@ import com.example.sweet_dreams.dto.product.ProductCreateDto;
 import com.example.sweet_dreams.dto.product.ProductDto;
 import com.example.sweet_dreams.dto.product.ProductUpdateDto;
 import com.example.sweet_dreams.model.Product;
-import com.example.sweet_dreams.service.CategoryService;
-import com.example.sweet_dreams.service.ProductService;
+import com.example.sweet_dreams.service.serviceImpl.CategoryService;
+import com.example.sweet_dreams.service.serviceImpl.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,10 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
 @Slf4j
 @Controller

@@ -1,10 +1,9 @@
 package com.example.sweet_dreams.controler;
 
-import com.example.sweet_dreams.dto.category.CategoryDto;
 import com.example.sweet_dreams.dto.category.CategoryWithProductsDto;
 import com.example.sweet_dreams.dto.product.ProductDto;
-import com.example.sweet_dreams.service.CategoryService;
-import com.example.sweet_dreams.service.ProductService;
+import com.example.sweet_dreams.service.serviceImpl.CategoryService;
+import com.example.sweet_dreams.service.serviceImpl.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

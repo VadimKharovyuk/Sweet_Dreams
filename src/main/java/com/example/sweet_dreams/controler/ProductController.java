@@ -3,8 +3,8 @@ package com.example.sweet_dreams.controler;
 import com.example.sweet_dreams.dto.category.CategoryDto;
 import com.example.sweet_dreams.dto.product.ProductDto;
 import com.example.sweet_dreams.dto.product.ProductListDto;
-import com.example.sweet_dreams.service.CategoryService;
-import com.example.sweet_dreams.service.ProductService;
+import com.example.sweet_dreams.service.serviceImpl.CategoryService;
+import com.example.sweet_dreams.service.serviceImpl.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -49,6 +49,10 @@ public class ProductController {
     public String showProductDetails(@PathVariable Long id, Model model) {
         ProductDto product = productService.getProductById(id);
         model.addAttribute("product", product);
+
+        // Получаем рекомендации (4 популярных товара)
+        model.addAttribute("popularProducts",
+                productService.getPopularProducts(product, 4));
         return "products/details";
     }
 }

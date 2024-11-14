@@ -1,4 +1,4 @@
-package com.example.sweet_dreams.service.serviceImpl;
+package com.example.sweet_dreams.service;
 
 
 import com.example.sweet_dreams.config.PasswordUtils;
@@ -8,7 +8,7 @@ import com.example.sweet_dreams.exception.AdminAlreadyExistsException;
 import com.example.sweet_dreams.exception.AdminNotFoundException;
 import com.example.sweet_dreams.model.Admin;
 import com.example.sweet_dreams.repository.AdminRepository;
-import com.example.sweet_dreams.service.AdminService;
+import com.example.sweet_dreams.service.serviceImpl.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

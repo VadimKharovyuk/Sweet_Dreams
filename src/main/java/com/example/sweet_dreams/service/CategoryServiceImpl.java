@@ -1,4 +1,4 @@
-package com.example.sweet_dreams.service.serviceImpl;
+package com.example.sweet_dreams.service;
 
 import com.example.sweet_dreams.dto.category.CategoryCreateDto;
 import com.example.sweet_dreams.dto.category.CategoryDto;
@@ -11,7 +11,7 @@ import com.example.sweet_dreams.model.Category;
 import com.example.sweet_dreams.model.Product;
 import com.example.sweet_dreams.repository.CategoryRepository;
 import com.example.sweet_dreams.repository.ProductRepository;
-import com.example.sweet_dreams.service.CategoryService;
+import com.example.sweet_dreams.service.serviceImpl.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

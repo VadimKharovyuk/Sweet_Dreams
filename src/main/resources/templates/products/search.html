@@ -6,6 +6,138 @@
     <link rel="stylesheet" th:href="@{/css/navigation.css}">
     <link rel="stylesheet" th:href="@{/css/search.css}">
     <link rel="stylesheet" th:href="@{/css/footer.css}">
+    <style>
+        .filter-section select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .pagination-link {
+            padding: 8px 12px;
+            margin: 0 4px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .pagination-link.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .pagination-link:hover:not(.active) {
+            background-color: #f8f9fa;
+        }
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .apply-filters, .reset-filters {
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            flex: 1;
+        }
+
+        .apply-filters {
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+
+        .reset-filters {
+            background-color: #6c757d;
+            color: white;
+            border: 1px solid #6c757d;
+        }
+
+        .apply-filters:hover {
+            background-color: #0056b3;
+        }
+
+        .reset-filters:hover {
+            background-color: #5a6268;
+        }
+        @media (max-width: 1200px) {
+            /* Существующие стили */
+
+            .filter-buttons {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .apply-filters, .reset-filters {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            /* Существующие стили */
+
+            .filter-buttons {
+                flex-direction: row; /* Возвращаем в ряд, так как места больше */
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* Существующие стили */
+
+            /* Если вы захотите показывать фильтры на мобильных через какое-то меню */
+            .filters-sidebar.active {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 1000;
+                background: white;
+                overflow-y: auto;
+                padding: 20px;
+            }
+
+            .filter-buttons {
+                position: sticky;
+                bottom: 20px;
+                background: white;
+                padding-top: 10px;
+            }
+
+            .apply-filters, .reset-filters {
+                padding: 12px 15px;
+                font-size: 16px; /* Увеличиваем для лучшего таппинга на мобильных */
+            }
+        }
+
+        /* Добавляем поддержку очень маленьких экранов */
+        @media (max-width: 360px) {
+            .filter-buttons {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .apply-filters, .reset-filters {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
 <!-- Подключаем навигацию -->

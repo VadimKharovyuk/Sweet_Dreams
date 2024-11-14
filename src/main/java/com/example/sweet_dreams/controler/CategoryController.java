@@ -3,7 +3,7 @@ package com.example.sweet_dreams.controler;
 import com.example.sweet_dreams.dto.category.CategoryCreateDto;
 import com.example.sweet_dreams.dto.category.CategoryDto;
 import com.example.sweet_dreams.dto.category.CategoryUpdateDto;
-import com.example.sweet_dreams.service.CategoryService;
+import com.example.sweet_dreams.service.serviceImpl.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

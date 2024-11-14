@@ -134,6 +134,7 @@
       font-size: 1.5rem;
       margin-bottom: 1rem;
       color: var(--primary-dark);
+      text-align: center;
     }
 
     .description-text {
@@ -387,6 +388,114 @@
       transform: translateY(0);
       box-shadow: 0 4px 15px rgba(13, 110, 253, 0.2);
     }
+    /* Секция рекомендаций */
+    .popular-products {
+      margin-top: 40px;
+      padding: 2rem;
+      background: var(--white);
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    /* Сетка для рекомендованных продуктов */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr); /* 4 товара в ряд */
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .product-card {
+      background: var(--gray-light);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .product-link {
+      text-decoration: none;
+      color: var(--text-color);
+    }
+
+    .product-image-container {
+      position: relative;
+      padding-top: 100%; /* Соотношение сторон 1:1 */
+      overflow: hidden;
+    }
+
+    .product-image-container img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .product-info {
+      padding: 15px;
+    }
+
+    .product-name {
+      font-size: 1rem;
+      margin: 0 0 10px;
+      height: 40px;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .product-price {
+      color: var(--primary-dark);
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin: 8px 0;
+    }
+
+    .product-rating {
+      color: #FFD700;
+      font-size: 0.9rem;
+    }
+
+    /* Адаптивность для рекомендаций */
+    @media (max-width: 1200px) {
+      .products-grid {
+        grid-template-columns: repeat(3, 1fr); /* 3 в ряд */
+      }
+    }
+
+    @media (max-width: 992px) {
+      .products-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 в ряд */
+      }
+
+      .popular-products {
+        padding: 1.5rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .products-grid {
+        grid-template-columns: 1fr; /* 1 в ряд */
+        gap: 15px;
+      }
+
+      .popular-products {
+        padding: 1rem;
+      }
+
+      .product-name {
+        height: auto;
+        -webkit-line-clamp: 3;
+      }
+    }
   </style>
 </head>
 <body>
@@ -468,7 +577,34 @@
 
     </div>
   </div>
+  <!-- Популярные товары -->
+  <div class="popular-products">
+    <h2 class="section-title">Популярні товари</h2>
+    <div class="products-grid">
+      <div th:each="popular : ${popularProducts}" class="product-card">
+        <a th:href="@{/products/{id}(id=${popular.id})}" class="product-link">
+          <div class="product-image-container">
+            <img th:if="${popular.mainImageBase64}"
+                 th:src="@{'data:image/jpeg;base64,' + ${popular.mainImageBase64}}"
+                 class="product-image"
+                 th:alt="${popular.name}">
+          </div>
+          <div class="product-info">
+            <h3 th:text="${popular.name}" class="product-name"></h3>
+            <p class="product-price"
+               th:text="${#numbers.formatDecimal(popular.price, 1, 2)} + ' UAH'">
+            </p>
+            <div class="product-rating">
+                            <span th:text="${#numbers.formatDecimal(popular.averageRating, 1, 1)} + '★'">
+                            </span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
 </div>
+
 <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

@@ -110,7 +110,7 @@ public class EmailService {
                     <p>Щоб не пропустити наші новини, додайте нашу адресу в список контактів.</p>
                     
                     <div style="text-align: center;">
-                        <a href="http://localhost:1001" class="button">
+                        <a href="https://sweetdreams-production.up.railway.app/" class="button">
                             Перейти на сайт
                         </a>
                     </div>

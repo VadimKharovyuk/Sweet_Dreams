@@ -1,4 +1,4 @@
-package com.example.sweet_dreams.service.serviceImpl;
+package com.example.sweet_dreams.service;
 
 
 import com.example.sweet_dreams.dto.review.ReviewCreateDto;
@@ -12,13 +12,12 @@ import com.example.sweet_dreams.model.Product;
 import com.example.sweet_dreams.model.Review;
 import com.example.sweet_dreams.repository.ProductRepository;
 import com.example.sweet_dreams.repository.ReviewRepository;
-import com.example.sweet_dreams.service.ReviewService;
+import com.example.sweet_dreams.service.serviceImpl.ReviewService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

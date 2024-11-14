@@ -1,4 +1,4 @@
-package com.example.sweet_dreams.service.serviceImpl;
+package com.example.sweet_dreams.service;
 
 import com.example.sweet_dreams.dto.product.*;
 import com.example.sweet_dreams.exception.CategoryNotFoundException;
@@ -8,8 +8,7 @@ import com.example.sweet_dreams.maper.ProductMapper;
 import com.example.sweet_dreams.model.Product;
 import com.example.sweet_dreams.repository.CategoryRepository;
 import com.example.sweet_dreams.repository.ProductRepository;
-import com.example.sweet_dreams.service.ImageService;
-import com.example.sweet_dreams.service.ProductService;
+import com.example.sweet_dreams.service.serviceImpl.ProductService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
@@ -155,9 +154,20 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
+    @Override
+    public List<ProductDto> getPopularProducts(ProductDto currentProduct, int limit) {
+        Page<Product> popularProducts = productRepository.findTopByOrderByAverageRatingDesc(
+                currentProduct.getId(),
+                PageRequest.of(0, limit)
+        );
+
+        return popularProducts.getContent().stream()
+                .map(productMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
 
     private Sort createSort(String sortBy, String sortDirection) {
-        // Исправлено: используем правильный импорт Sort.Direction
         Sort.Direction direction = sortDirection.equalsIgnoreCase("desc") ?
                 Sort.Direction.DESC : Sort.Direction.ASC;
 

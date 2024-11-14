@@ -1,4 +1,4 @@
-package com.example.sweet_dreams.service;
+package com.example.sweet_dreams.service.serviceImpl;
 
 import com.example.sweet_dreams.dto.order.OrderDTO;
 import com.example.sweet_dreams.model.Order;
