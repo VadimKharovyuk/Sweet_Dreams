@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Политика пользования - Sweet Dreams</title>
+  <link rel="stylesheet" th:href="@{/css/navigation.css}">
+  <link rel="stylesheet" th:href="@{/css/footer.css}">
+  <style>
+    :root {
+      --primary-color: #40E0D0;
+      --primary-dark: #20B2AA;
+      --text-color: #333333;
+      --background-light: #f5f5f5;
+      --border-color: #e0e0e0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.6;
+      color: var(--text-color);
+      background-color: var(--background-light);
+      margin: 0;
+      padding: 0;
+    }
+
+    .policy-container {
+      max-width: 1000px;
+      margin: 100px auto 50px;
+      padding: 40px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .policy-header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid var(--primary-color);
+    }
+
+    .policy-title {
+      font-size: 2.5em;
+      color: var(--primary-dark);
+      margin-bottom: 15px;
+    }
+
+    .policy-date {
+      color: #666;
+      font-style: italic;
+    }
+
+    .policy-section {
+      margin-bottom: 30px;
+      padding: 20px;
+      background: var(--background-light);
+      border-radius: 10px;
+    }
+
+    .section-title {
+      color: var(--primary-dark);
+      font-size: 1.5em;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .policy-list {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    .policy-list li {
+      margin-bottom: 15px;
+      padding-left: 25px;
+      position: relative;
+    }
+
+    .policy-list li::before {
+      content: "•";
+      color: var(--primary-color);
+      font-size: 1.5em;
+      position: absolute;
+      left: 0;
+      top: -5px;
+    }
+
+    .highlight-box {
+      background: rgba(64, 224, 208, 0.1);
+      border-left: 4px solid var(--primary-color);
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 0 10px 10px 0;
+    }
+
+    .contact-section {
+      background: var(--primary-dark);
+      color: white;
+      padding: 30px;
+      border-radius: 10px;
+      margin-top: 40px;
+    }
+
+    .contact-title {
+      font-size: 1.3em;
+      margin-bottom: 15px;
+    }
+
+    .contact-info {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .contact-item {
+      text-align: center;
+    }
+
+    .contact-item i {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .policy-container {
+        margin: 80px 20px 30px;
+        padding: 20px;
+      }
+
+      .policy-title {
+        font-size: 2em;
+      }
+
+      .section-title {
+        font-size: 1.3em;
+      }
+
+      .contact-info {
+        flex-direction: column;
+      }
+    }
+
+    /* Анимации */
+    .policy-section {
+      transition: transform 0.3s ease;
+    }
+
+    .policy-section:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Стилизация скролла */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--background-light);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary-color);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary-dark);
+    }
+    /* Стили для интерактивной секции */
+    .interactive-section {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .toggle-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 200px;
+      padding: 15px 25px;
+      margin: 20px auto;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .toggle-button:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .button-icon {
+      transition: transform 0.3s ease;
+    }
+
+    .toggle-button.active .button-icon {
+      transform: rotate(180deg);
+    }
+
+    .hidden-content {
+      max-height: 0;
+      opacity: 0;
+      transition: all 0.5s ease-in-out;
+      overflow: hidden;
+    }
+
+    .hidden-content.active {
+      max-height: 1000px;
+      opacity: 1;
+      margin-top: 20px;
+    }
+
+    .content-wrapper {
+      background: var(--background-light);
+      border-radius: 15px;
+      padding: 30px;
+      transform: translateY(20px);
+      transition: transform 0.5s ease;
+    }
+
+    .hidden-content.active .content-wrapper {
+      transform: translateY(0);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .info-card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease;
+    }
+
+    .info-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .info-card i {
+      font-size: 2rem;
+      color: var(--primary-color);
+      margin-bottom: 15px;
+    }
+
+    .info-card h4 {
+      color: var(--primary-dark);
+      margin: 10px 0;
+      font-size: 1.2rem;
+    }
+
+    .info-card p {
+      color: var(--text-color);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    /* Адаптивность для мобильных устройств */
+    @media (max-width: 768px) {
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .toggle-button {
+        width: 180px;
+        padding: 12px 20px;
+        font-size: 0.9rem;
+      }
+
+      .content-wrapper {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div th:replace="~{fragments/navigation :: navigation}"></div>
+
+<div class="policy-container">
+  <header class="policy-header">
+    <h1 class="policy-title">Політика користування Sweet Dreams</h1>
+    <p class="policy-date">Останнє оновлення: 14 листопада 2024</p>
+  </header>
+
+
+  <div class="policy-section">
+    <h2 class="section-title">1. Загальні положення</h2>
+    <ul class="policy-list">
+      <li>Ця політика визначає умови використання інтернет-магазину Sweet Dreams.</li>
+      <li>Використовуючи наш сайт, ви погоджуєтеся з умовами цієї політики.</li>
+      <li>Ми залишаємо за собою право змінювати політику без попереднього повідомлення.</li>
+    </ul>
+  </div>
+
+  <div class="policy-section">
+    <h2 class="section-title">2. Замовлення та оплата</h2>
+    <ul class="policy-list">
+      <li>Мінімальний час для оформлення замовлення становить 24 години.</li>
+      <li>Оплата здійснюється в національній валюті України.</li>
+      <li>Можлива часткова передоплата для підтвердження замовлення.</li>
+      <li>У разі скасування замовлення менш ніж за 24 години може стягуватися компенсація.</li>
+    </ul>
+  </div>
+
+  <div class="highlight-box">
+    <strong>Важливо:</strong> Усі замовлення на кастомізовані торти потребують 50% передоплати і не підлягають поверненню.
+  </div>
+
+  <div class="policy-section">
+    <h2 class="section-title">3. Доставка</h2>
+    <ul class="policy-list">
+      <li>Доставка здійснюється по місту та області.</li>
+      <li>Вартість доставки залежить від відстані та обсягу замовлення.</li>
+      <li>Час доставки узгоджується індивідуально.</li>
+      <li>При самовивозі надається знижка 5%.</li>
+    </ul>
+  </div>
+
+  <div class="policy-section">
+    <h2 class="section-title">4. Якість та гарантії</h2>
+    <ul class="policy-list">
+      <li>Ми гарантуємо свіжість усієї продукції.</li>
+      <li>Усі інгредієнти мають сертифікати якості.</li>
+      <li>У разі претензій до якості звернення розглядається протягом 24 годин.</li>
+    </ul>
+  </div>
+
+  <div class="contact-section">
+    <h2 class="contact-title">Залишились питання?</h2>
+    <div class="contact-info">
+      <div class="contact-item">
+        <i class="fas fa-phone"></i>
+        <p>+380 XX XXX XX XX</p>
+      </div>
+      <div class="contact-item">
+        <i class="fas fa-envelope"></i>
+        <p>support@sweetdreams.com</p>
+      </div>
+      <div class="contact-item">
+        <i class="fas fa-clock"></i>
+        <p>Пн-Нд: 9:00 - 20:00</p>
+      </div>
+    </div>
+  </div>
+  <div class="policy-section interactive-section">
+    <h2 class="section-title">5. Додаткова інформація</h2>
+
+    <button class="toggle-button" onclick="toggleContent()">
+      <span class="button-text">Натисни на мене</span>
+      <span class="button-icon">▼</span>
+    </button>
+
+    <div id="hidden-content" class="hidden-content">
+      <div class="content-wrapper">
+        <h3>Важлива інформація про наші торти</h3>
+        <div class="info-grid">
+          <div class="info-card">
+            <i class="fas fa-birthday-cake"></i>
+            <!--          <h4>Состав</h4>-->
+            <h4>ПУТИН</h4>
+            <p>Ми використовуємо тільки натуральні інгредієнти найвищої якості. Усі торти готуються
+              безпосередньо перед доставкою.</p>
+          </div>
+
+          <div class="info-card">
+            <i class="fas fa-temperature-low"></i>
+            <!--          <h4>Хранение</h4>-->
+            <h4>ХУЙЛО</h4>
+            <p>Оптимальна температура зберігання 2-6°C. Термін зберігання залежить від типу торта і
+              вказується при замовленні.</p>
+          </div>
+
+          <div class="info-card">
+            <i class="fas fa-truck"></i>
+            <!--          <h4>Доставка</h4>-->
+            <h4>СЛАВА</h4>
+            <p>Ми використовуємо спеціальні термобокси для транспортування, щоб зберегти
+              свіжість та зовнішній вигляд торта.</p>
+          </div>
+
+          <div class="info-card">
+            <i class="fas fa-star"></i>
+            <!--          <h4>Особые случаи</h4>-->
+            <h4>УКРАЇНІ</h4>
+            <p>Для особливих випадків ми можемо створити унікальний дизайн торта за вашим
+              описом чи фотографією.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<!-- Font Awesome для иконок -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</body>
+
+  <script>
+    function toggleContent() {
+    const button = document.querySelector('.toggle-button');
+    const content = document.getElementById('hidden-content');
+    const buttonIcon = document.querySelector('.button-icon');
+
+    button.classList.toggle('active');
+    content.classList.toggle('active');
+
+    // Добавляем плавную анимацию для контента
+    if (content.classList.contains('active')) {
+    content.style.display = 'block';
+    // Анимация появления
+    setTimeout(() => {
+    content.style.opacity = '1';
+    content.style.maxHeight = content.scrollHeight + 'px';
+  }, 10);
+  } else {
+    // Анимация исчезновения
+    content.style.opacity = '0';
+    content.style.maxHeight = '0';
+    setTimeout(() => {
+    content.style.display = 'none';
+  }, 500);
+  }
+
+    // Добавляем эффект отскока для кнопки
+    button.style.transform = 'scale(0.95)';
+    setTimeout(() => {
+    button.style.transform = 'scale(1)';
+  }, 200);
+  }
+
+    // Добавляем анимацию при скролле
+    document.addEventListener('scroll', function() {
+    const cards = document.querySelectorAll('.info-card');
+    cards.forEach(card => {
+    const cardTop = card.getBoundingClientRect().top;
+    const triggerBottom = window.innerHeight * 0.8;
+
+    if (cardTop < triggerBottom) {
+    card.style.opacity = '1';
+    card.style.transform = 'translateY(0)';
+  }
+  });
+  });
+
+</script>
+</html>
