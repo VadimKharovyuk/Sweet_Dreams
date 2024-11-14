@@ -129,7 +129,7 @@
           <h5 class="mb-0" th:text="${review.authorName}">Имя автора</h5>
           <div class="star-rating">
             <i class="fas fa-star" th:each="i : ${#numbers.sequence(1, review.rating)}"></i>
-            <i class="far fa-star" th:each="i : ${#numbers.sequence(review.rating + 1, 5)}"></i>
+<!--            <i class="far fa-star" th:each="i : ${#numbers.sequence(review.rating + 1, 5)}"></i>-->
           </div>
         </div>
         <small class="text-muted" th:text="${#temporals.format(review.createdAt, 'dd.MM.yyyy')}">Дата</small>

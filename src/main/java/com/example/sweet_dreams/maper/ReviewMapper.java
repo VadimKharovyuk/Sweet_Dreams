@@ -37,10 +37,6 @@ public class ReviewMapper {
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        // Обновляем счетчик отзывов в продукте
-        product.setReviewsCount(product.getReviewsCount() + 1);
-        product.getReviews().add(review);
-
         return review;
     }
 
@@ -98,13 +94,6 @@ public class ReviewMapper {
                 .build();
     }
 
-
-    public List<ReviewDto> toDtoList(List<Review> reviews) {
-        if (reviews == null) return List.of();
-        return reviews.stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
-    }
 
     public List<ReviewListDto> toListDtoList(List<Review> reviews) {
         if (reviews == null) return List.of();

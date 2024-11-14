@@ -39,8 +39,9 @@ public class ReviewServiceImpl implements ReviewService {
         // Сохраняем отзыв
         review = reviewRepository.save(review);
 
-        // Обновляем статистику продукта и сохраняем изменения
-        product.setReviewsCount(product.getReviewsCount() + 1);
+        // Обновляем статистику продукта
+        product.getReviews().add(review);
+        product.setReviewsCount(product.getReviews().size()); // Используем размер коллекции
         productRepository.save(product);
 
         return reviewMapper.toDto(review);
