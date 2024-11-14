@@ -10,6 +10,7 @@ import com.example.sweet_dreams.model.Product;
 import com.example.sweet_dreams.model.Review;
 import com.example.sweet_dreams.repository.CategoryRepository;
 import com.example.sweet_dreams.service.ImageService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +24,60 @@ public class ProductMapper {
     private final CategoryMapper categoryMapper;
     private final ImageService imageService;
     private final CategoryRepository categoryRepository;
+
+
+    public Product updateProductFromDto(Product existingProduct, ProductUpdateDto updateDto) {
+        if (updateDto.getName() != null) {
+            existingProduct.setName(updateDto.getName());
+        }
+
+        if (updateDto.getDescription() != null) {
+            existingProduct.setDescription(updateDto.getDescription());
+        }
+
+        if (updateDto.getPrice() != null) {
+            existingProduct.setPrice(updateDto.getPrice());
+        }
+
+        if (updateDto.getCategoryId() != null) {
+            Category category = categoryRepository.findById(updateDto.getCategoryId())
+                    .orElseThrow(() -> new RuntimeException(
+                            "Категория не найдена с id: " + updateDto.getCategoryId()));
+            existingProduct.setCategory(category);
+        }
+
+        if (updateDto.getSize() != null) {
+            existingProduct.setSize(updateDto.getSize());
+        }
+
+        if (updateDto.getWeight() != null) {
+            existingProduct.setWeight(updateDto.getWeight());
+        }
+
+        existingProduct.setCustom(updateDto.isCustom());
+        existingProduct.setAvailable(updateDto.isAvailable());
+
+        if (updateDto.getPreparationTimeHours() != null) {
+            existingProduct.setPreparationTimeHours(updateDto.getPreparationTimeHours());
+        }
+
+        if (updateDto.getMinimumOrderTimeHours() != null) {
+            existingProduct.setMinimumOrderTimeHours(updateDto.getMinimumOrderTimeHours());
+        }
+
+        // Обновление изображения с использованием вашего ImageService
+        if (updateDto.getMainImage() != null && !updateDto.getMainImage().isEmpty()) {
+            try {
+                // Декодируем Base64 строку в массив байтов
+                byte[] imageBytes = Base64.getDecoder().decode(updateDto.getMainImage());
+                existingProduct.setMainImage(imageBytes);
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException("Неверный формат изображения", e);
+            }
+        }
+
+        return existingProduct;
+    }
 
     public Product toEntity(ProductCreateDto dto) throws IOException {
         if (dto == null) return null;

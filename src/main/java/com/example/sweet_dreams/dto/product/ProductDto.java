@@ -2,8 +2,10 @@ package com.example.sweet_dreams.dto.product;
 
 import com.example.sweet_dreams.dto.category.CategoryDto;
 import com.example.sweet_dreams.model.Product;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -12,6 +14,8 @@ import java.util.Set;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProductDto {
     private Long id;
     private String name;
@@ -31,4 +35,6 @@ public class ProductDto {
     private Map<Product.CakeSize, BigDecimal> sizePrices;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    private Long categoryId;
 }

@@ -15,8 +15,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 @Slf4j
 @Controller
@@ -91,30 +95,67 @@ public class AdminProductController {
     }
 
     // Форма редактирования
+    // Форма редактирования
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
-        ProductDto productDto = productService.getProductById(id);
-        model.addAttribute("productDto", productDto);
-        model.addAttribute("cakeSizes", Product.CakeSize.values());
-        return "admin/products/edit";
+        try {
+            // Получаем продукт
+            ProductDto productDto = productService.getProductById(id);
+            if (productDto == null) {
+                // Если продукт не найден, создаем новый пустой DTO
+                productDto = new ProductDto();
+            }
+
+            // Добавляем все необходимые атрибуты в модель
+            model.addAttribute("productDto", productDto);
+            model.addAttribute("categories", categoryService.getAllCategories());
+            model.addAttribute("cakeSizes", Product.CakeSize.values());
+
+            return "admin/products/edit";
+        } catch (Exception e) {
+            // В случае ошибки добавляем сообщение об ошибке
+            model.addAttribute("error", "Продукт не найден: " + e.getMessage());
+            // Создаем пустой DTO чтобы избежать NullPointerException
+            model.addAttribute("productDto", new ProductDto());
+            model.addAttribute("categories", categoryService.getAllCategories());
+            model.addAttribute("cakeSizes", Product.CakeSize.values());
+            return "admin/products/edit";
+        }
     }
 
     // Обработка редактирования
     @PostMapping("/edit/{id}")
     public String updateProduct(@PathVariable Long id,
-                                @Valid @ModelAttribute ProductUpdateDto updateDto,
+                                @ModelAttribute("productDto") ProductUpdateDto updateDto,
                                 BindingResult result,
-                                Model model) {
+                                Model model,
+                                @RequestParam(name = "mainImageFile", required = false) MultipartFile imageFile) {
+
+        // Проверяем наличие ошибок валидации
         if (result.hasErrors()) {
+            model.addAttribute("categories", categoryService.getAllCategories());
             model.addAttribute("cakeSizes", Product.CakeSize.values());
             return "admin/products/edit";
         }
 
         try {
-            productService.updateProduct(id, updateDto);
+            // Обрабатываем загруженное изображение
+            if (imageFile != null && !imageFile.isEmpty()) {
+                String base64Image = Base64.getEncoder().encodeToString(imageFile.getBytes());
+                updateDto.setMainImage(base64Image);
+            }
+
+            // Устанавливаем ID продукта
+            updateDto.setId(id);
+
+            // Обновляем продукт
+            productService.updateProduct(updateDto);
+
             return "redirect:/admin/products?updated";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
+            model.addAttribute("categories", categoryService.getAllCategories());
+            model.addAttribute("cakeSizes", Product.CakeSize.values());
             return "admin/products/edit";
         }
     }

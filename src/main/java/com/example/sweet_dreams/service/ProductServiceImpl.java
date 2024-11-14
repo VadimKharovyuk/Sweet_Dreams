@@ -48,17 +48,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
-    @Override
-    public ProductDto updateProduct(Long id, ProductUpdateDto productUpdateDto) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException("Продукт не найден с id: " + id));
+    @Transactional
+    public ProductDto updateProduct(ProductUpdateDto updateDto) {
+        Product existingProduct = productRepository.findById(updateDto.getId())
+                .orElseThrow(() -> new RuntimeException(
+                        "Продукт не найден с id: " + updateDto.getId()));
 
-        if (productUpdateDto.getCategoryId() != null) {
-            validateCategory(productUpdateDto.getCategoryId());
-        }
+        Product updatedProduct = productMapper.updateProductFromDto(existingProduct, updateDto);
+        updatedProduct = productRepository.save(updatedProduct);
 
-        productMapper.updateEntityFromDto(productUpdateDto, product);
-        Product updatedProduct = productRepository.save(product);
         return productMapper.toDto(updatedProduct);
     }
 

@@ -15,27 +15,28 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/admin/categories")
 @RequiredArgsConstructor
-public class CategoryController {
+public class CategoryController extends BaseAdminController {
 
     private final CategoryService categoryService;
 
+    @GetMapping("/create")
+    public String showCreateForm(Model model) {
+        model.addAttribute("categoryCreateDto", new CategoryCreateDto());
+        return "admin/categories/create";
+    }
+
     @GetMapping
-    public String listCategories(Model model, HttpSession session) {
-        if (session.getAttribute("adminId") == null) {
-            return "redirect:/admin/login";
+    public String listCategories(Model model,HttpSession session) {
+        String authCheck = checkAdminAuth(session);
+        if (authCheck != null) {
+            return authCheck;
         }
+
         model.addAttribute("categories", categoryService.getAllCategories());
         return "admin/categories/list";
     }
 
-    @GetMapping("/create")
-    public String showCreateForm(Model model, HttpSession session) {
-        if (session.getAttribute("adminId") == null) {
-            return "redirect:/admin/login";
-        }
-        model.addAttribute("categoryCreateDto", new CategoryCreateDto());
-        return "admin/categories/create";
-    }
+
 
     @PostMapping("/create")
     public String createCategory(@Valid @ModelAttribute CategoryCreateDto categoryCreateDto,

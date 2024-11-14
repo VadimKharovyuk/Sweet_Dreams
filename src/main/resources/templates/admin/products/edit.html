@@ -1,76 +1,256 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ru"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Создание продукта</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Редактирование продукта</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+        rel="stylesheet">
 </head>
 <body>
-<form th:action="@{/admin/products/edit/{id}(id=${productDto.id})}"
-      th:object="${productDto}"
-      method="post"
-      enctype="multipart/form-data">
+<div class="container mt-4">
+  <h2 class="mb-4">Редактирование продукта</h2>
 
-  <!-- Добавляем скрытое поле для ID -->
-  <input type="hidden" th:field="*{id}">
+  <!-- Сообщение об ошибке -->
+  <div th:if="${error}" class="alert alert-danger" role="alert">
+    <span th:text="${error}">Error message</span>
+  </div>
 
-  <form th:action="@{/admin/products/create}"
-        th:object="${productDto}"
+  <form th:action="@{/admin/products/edit/{id}(id=${productDto.id})}"
         method="post"
-        enctype="multipart/form-data">
+        enctype="multipart/form-data"
+        th:object="${productDto}">
 
-    <div class="form-group">
-      <label for="name">Название:</label>
-      <input type="text" id="name" th:field="*{name}" required>
-      <div class="error-message" th:if="${#fields.hasErrors('name')}"
-           th:errors="*{name}"></div>
+    <input type="hidden" th:field="*{id}" />
+
+    <div class="row">
+      <!-- Левая колонка -->
+      <div class="col-md-8">
+        <!-- Основная информация -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="mb-0">Основная информация</h5>
+          </div>
+          <div class="card-body">
+            <!-- Название -->
+            <div class="mb-3">
+              <label for="name" class="form-label">Название*</label>
+              <input type="text"
+                     class="form-control"
+                     th:field="*{name}"
+                     th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'"
+                     required>
+              <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}"
+                   th:errors="*{name}">Ошибка названия</div>
+            </div>
+
+            <!-- Описание -->
+            <div class="mb-3">
+              <label for="description" class="form-label">Описание</label>
+              <textarea class="form-control"
+                        th:field="*{description}"
+                        rows="4"></textarea>
+            </div>
+
+            <!-- Цена -->
+            <div class="mb-3">
+              <label for="price" class="form-label">Цена*</label>
+              <div class="input-group">
+                <input type="number"
+                       class="form-control"
+                       th:field="*{price}"
+                       step="0.01"
+                       required>
+                <span class="input-group-text">₽</span>
+              </div>
+              <div class="invalid-feedback" th:if="${#fields.hasErrors('price')}"
+                   th:errors="*{price}">Ошибка цены</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Характеристики -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="mb-0">Характеристики</h5>
+          </div>
+          <div class="card-body">
+            <!-- Категория -->
+            <div class="mb-3">
+              <label for="categoryId" class="form-label">Категория*</label>
+              <select class="form-select"
+                      th:field="*{categoryId}"
+                      required>
+                <option value="">Выберите категорию</option>
+                <option th:each="category : ${categories}"
+                        th:value="${category.id}"
+                        th:text="${category.name}"></option>
+              </select>
+            </div>
+
+            <!-- Размер -->
+            <div class="mb-3">
+              <label for="size" class="form-label">Размер торта</label>
+              <select class="form-select" th:field="*{size}">
+                <option value="">Выберите размер</option>
+                <option th:each="size : ${cakeSizes}"
+                        th:value="${size.name()}"
+                        th:text="${size.toString()}">
+                </option>
+              </select>
+            </div>
+
+            <!-- Вес -->
+            <div class="mb-3">
+              <label for="weight" class="form-label">Вес (кг)</label>
+              <input type="number"
+                     class="form-control"
+                     th:field="*{weight}"
+                     step="0.1">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Правая колонка -->
+      <div class="col-md-4">
+        <!-- Изображение -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="mb-0">Изображение</h5>
+          </div>
+          <div class="card-body">
+            <div class="mb-3">
+              <img th:if="${productDto.mainImageBase64}"
+                   th:src="'data:image/jpeg;base64,' + ${productDto.mainImageBase64}"
+                   class="img-fluid mb-2 rounded"
+                   alt="Product Image">
+              <input type="file"
+                     class="form-control"
+                     name="mainImageFile"
+                     accept="image/*">
+              <small class="form-text text-muted">
+                Рекомендуемый размер: 800x600px
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Настройки -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="mb-0">Настройки</h5>
+          </div>
+          <div class="card-body">
+            <!-- Кастомизация -->
+            <div class="mb-3 form-check">
+              <input type="checkbox"
+                     class="form-check-input"
+                     th:field="*{custom}">
+              <label class="form-check-label" for="custom">
+                Можно кастомизировать
+              </label>
+            </div>
+
+            <!-- Доступность -->
+            <div class="mb-3 form-check">
+              <input type="checkbox"
+                     class="form-check-input"
+                     th:field="*{available}">
+              <label class="form-check-label" for="available">
+                Доступен для заказа
+              </label>
+            </div>
+
+            <!-- Время приготовления -->
+            <div class="mb-3">
+              <label for="preparationTimeHours" class="form-label">
+                Время приготовления (часов)
+              </label>
+              <input type="number"
+                     class="form-control"
+                     th:field="*{preparationTimeHours}">
+            </div>
+
+            <!-- Минимальное время для заказа -->
+            <div class="mb-3">
+              <label for="minimumOrderTimeHours" class="form-label">
+                Минимальное время для заказа (часов)
+              </label>
+              <input type="number"
+                     class="form-control"
+                     th:field="*{minimumOrderTimeHours}">
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="form-group">
-      <label for="description">Описание:</label>
-      <textarea id="description" th:field="*{description}" rows="4"></textarea>
+    <!-- Кнопки -->
+    <div class="row mt-4 mb-5">
+      <div class="col">
+        <a th:href="@{/admin/products}" class="btn btn-secondary">Отмена</a>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <button type="button"
+                class="btn btn-danger float-end"
+                data-bs-toggle="modal"
+                data-bs-target="#deleteModal">
+          Удалить
+        </button>
+      </div>
     </div>
-
-    <div class="form-group">
-      <label for="price">Цена:</label>
-      <input type="number" id="price" th:field="*{price}" step="0.01" required>
-      <div class="error-message" th:if="${#fields.hasErrors('price')}"
-           th:errors="*{price}"></div>
-    </div>
-
-    <div class="form-group">
-      <label for="size">Размер:</label>
-      <select id="size" th:field="*{size}">
-        <option value="">Выберите размер</option>
-        <option th:each="size : ${cakeSizes}"
-                th:value="${size}"
-                th:text="${size.name()}"></option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label for="mainImage">Изображение:</label>
-      <input type="file" id="mainImage" name="mainImage" accept="image/*">
-      <img id="imagePreview" class="preview-image" style="display: none;">
-    </div>
-
-    <div class="form-group">
-      <label>
-        <input type="checkbox" th:field="*{custom}">
-        Возможна кастомизация
-      </label>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Создать</button>
-    <a href="/admin/products" class="btn">Отмена</a>
   </form>
-  </div>
 
-  <!-- Показываем текущее изображение -->
-  <div class="form-group">
-    <img th:if="${productDto.mainImageBase64}"
-         th:src="@{'data:image/jpeg;base64,' + ${productDto.mainImageBase64}}"
-         class="preview-image">
+  <!-- Модальное окно подтверждения удаления -->
+  <div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Подтверждение удаления</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p>Вы уверены, что хотите удалить этот продукт?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+          <form th:action="@{/admin/products/delete/{id}(id=${productDto.id})}"
+                method="post"
+                style="display: inline;">
+            <button type="submit" class="btn btn-danger">Удалить</button>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>
-</form>
+</div>
+
+<!-- Bootstrap JS and Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+<!-- Image Preview Script -->
+<script>
+  document.querySelector('input[name="mainImageFile"]').addEventListener('change', function(e) {
+    if (this.files && this.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const preview = document.querySelector('img');
+        if (preview) {
+          preview.src = e.target.result;
+        } else {
+          const newPreview = document.createElement('img');
+          newPreview.src = e.target.result;
+          newPreview.classList.add('img-fluid', 'mb-2', 'rounded');
+          this.parentElement.insertBefore(newPreview, this);
+        }
+      }
+      reader.readAsDataURL(this.files[0]);
+    }
+  });
+</script>
 </body>
 </html>
