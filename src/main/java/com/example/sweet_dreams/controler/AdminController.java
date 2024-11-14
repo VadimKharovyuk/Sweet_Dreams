@@ -25,11 +25,6 @@ public class AdminController {
     private final AdminRepository adminRepository;
     private final OrderService orderService;
 
-@GetMapping("/orders")
-public String orders(Model model) {
-    model.addAttribute("orders", orderService.findAll());
-    return "admin/orders-list";
-}
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
         // Проверяем, аутентифицирован ли админ
@@ -40,6 +35,13 @@ public String orders(Model model) {
         model.addAttribute("adminUsername", session.getAttribute("adminUsername"));
         return "admin/dashboard";
     }
+
+@GetMapping("/orders")
+public String orders(Model model) {
+    model.addAttribute("orders", orderService.findAll());
+    return "admin/orders-list";
+}
+
 
 
 

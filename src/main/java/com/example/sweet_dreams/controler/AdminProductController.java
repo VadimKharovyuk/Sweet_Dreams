@@ -7,6 +7,7 @@ import com.example.sweet_dreams.dto.product.ProductUpdateDto;
 import com.example.sweet_dreams.model.Product;
 import com.example.sweet_dreams.service.serviceImpl.CategoryService;
 import com.example.sweet_dreams.service.serviceImpl.ProductService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,18 +29,25 @@ public class AdminProductController {
 
     // Показать список всех продуктов
     @GetMapping
-    public String listProducts(Model model) {
+    public String listProducts(Model model, HttpSession session) {
         model.addAttribute("products", productService.getAllProducts());
+        if (session.getAttribute("adminId") == null) {
+            return "redirect:/admin/login";
+        }
 
         return "admin/products/list";
     }
 
     @GetMapping("/create")
-    public String showCreateForm(Model model) {
+    public String showCreateForm(Model model, HttpSession session) {
         if (!model.containsAttribute("productCreateDto")) {
             model.addAttribute("productCreateDto", new ProductCreateDto());
         }
         List<CategoryDto> categories = categoryService.getAllCategories();
+
+        if (session.getAttribute("adminId") == null) {
+            return "redirect:/admin/login";
+        }
         model.addAttribute("categories", categories);
         model.addAttribute("cakeSizes", Product.CakeSize.values());
         return "admin/products/create";
@@ -113,8 +121,11 @@ public class AdminProductController {
 
     // Удаление продукта
     @PostMapping("/delete/{id}")
-    public String deleteProduct(@PathVariable Long id) {
+    public String deleteProduct(@PathVariable Long id, HttpSession session) {
         productService.deleteProduct(id);
+        if (session.getAttribute("adminId") == null) {
+            return "redirect:/admin/login";
+        }
         return "redirect:/admin/products?deleted";
     }
 

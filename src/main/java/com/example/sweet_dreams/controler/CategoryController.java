@@ -4,6 +4,7 @@ import com.example.sweet_dreams.dto.category.CategoryCreateDto;
 import com.example.sweet_dreams.dto.category.CategoryDto;
 import com.example.sweet_dreams.dto.category.CategoryUpdateDto;
 import com.example.sweet_dreams.service.serviceImpl.CategoryService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -19,13 +20,19 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping
-    public String listCategories(Model model) {
+    public String listCategories(Model model, HttpSession session) {
+        if (session.getAttribute("adminId") == null) {
+            return "redirect:/admin/login";
+        }
         model.addAttribute("categories", categoryService.getAllCategories());
         return "admin/categories/list";
     }
 
     @GetMapping("/create")
-    public String showCreateForm(Model model) {
+    public String showCreateForm(Model model, HttpSession session) {
+        if (session.getAttribute("adminId") == null) {
+            return "redirect:/admin/login";
+        }
         model.addAttribute("categoryCreateDto", new CategoryCreateDto());
         return "admin/categories/create";
     }
