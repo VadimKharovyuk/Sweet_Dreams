@@ -20,6 +20,7 @@ public class Order {
     private String customerEmail;
     private String customerPhone;
     private String deliveryAddress;
+    private String privateMessage;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<OrderItem> items;

@@ -154,56 +154,68 @@
         <!-- Форма оформления заказа -->
         <div class="checkout-form">
             <h2 class="text-xl font-semibold mb-4">Данные доставки</h2>
-            <form th:action="@{/orders/checkout}" method="post" th:object="${orderDTO}">
-                <div class="form-group">
-                    <label class="form-label">Имя</label>
+            <form th:action="@{/orders/checkout}" method="post" th:object="${orderDTO}" class="ui form">
+                <!-- Сообщения об ошибках -->
+                <div class="ui error message" th:if="${#fields.hasAnyErrors()}">
+                    <ul>
+                        <li th:each="err : ${#fields.allErrors()}" th:text="${err}"></li>
+                    </ul>
+                </div>
+
+                <div class="field required">
+                    <label>Имя</label>
                     <input type="text"
                            th:field="*{customerName}"
-                           class="form-input"
-                           required>
-                    <div class="form-error"
+                           placeholder="Введите ваше имя">
+                    <div class="ui pointing red basic label"
                          th:if="${#fields.hasErrors('customerName')}"
                          th:errors="*{customerName}">
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Email</label>
+                <div class="field required">
+                    <label>Email</label>
                     <input type="email"
                            th:field="*{customerEmail}"
-                           class="form-input"
-                           required>
-                    <div class="form-error"
+                           placeholder="example@email.com">
+                    <div class="ui pointing red basic label"
                          th:if="${#fields.hasErrors('customerEmail')}"
                          th:errors="*{customerEmail}">
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Телефон</label>
+                <div class="field required">
+                    <label>Телефон</label>
                     <input type="tel"
                            th:field="*{customerPhone}"
-                           class="form-input"
-                           required>
-                    <div class="form-error"
+                           placeholder="+380123456789">
+                    <div class="ui pointing red basic label"
                          th:if="${#fields.hasErrors('customerPhone')}"
                          th:errors="*{customerPhone}">
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Адрес доставки</label>
+                <div class="field required">
+                    <label>Адрес доставки</label>
                     <textarea th:field="*{deliveryAddress}"
-                              class="form-input"
-                              rows="3"
-                              required></textarea>
-                    <div class="form-error"
+                              placeholder="Укажите полный адрес доставки"
+                              rows="3"></textarea>
+                    <div class="ui pointing red basic label"
                          th:if="${#fields.hasErrors('deliveryAddress')}"
                          th:errors="*{deliveryAddress}">
                     </div>
                 </div>
-
-                <button type="submit" class="submit-button">
+                <div class="field">
+                    <label>Побажання </label>
+                    <textarea th:field="*{privateMessage}"
+                              placeholder="Укажите ваши пожелания к заказу (необязательно)"
+                              rows="3"></textarea>
+                    <div class="ui pointing red basic label"
+                         th:if="${#fields.hasErrors('privateMessage')}"
+                         th:errors="*{privateMessage}">
+                    </div>
+                </div>
+                <button type="submit" class="ui primary button">
                     Подтвердить заказ
                 </button>
             </form>

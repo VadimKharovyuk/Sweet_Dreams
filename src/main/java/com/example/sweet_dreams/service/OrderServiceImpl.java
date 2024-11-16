@@ -42,6 +42,7 @@ public class OrderServiceImpl implements OrderService {
         order.setCustomerEmail(orderDTO.getCustomerEmail());
         order.setCustomerPhone(orderDTO.getCustomerPhone());
         order.setDeliveryAddress(orderDTO.getDeliveryAddress());
+        order.setPrivateMessage(orderDTO.getPrivateMessage());
         order.setStatus(Order.OrderStatus.NEW);
         order.setCreatedAt(LocalDateTime.now());
 

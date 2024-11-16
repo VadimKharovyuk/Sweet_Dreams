@@ -105,6 +105,7 @@ public class OrderController {
             // Устанавливаем преобразованные items в DTO заказа
             orderDTO.setItems(orderItems);
 
+
             // Создаем заказ
             Order order = orderService.create(orderDTO);
 
