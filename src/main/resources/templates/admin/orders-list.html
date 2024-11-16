@@ -74,25 +74,48 @@
   </style>
 </head>
 <body>
+
 <div th:replace="~{fragments/navigation :: navigation}"></div><br><br>
 
 <div class="orders-container">
   <div class="orders-header">
     <h1 class="text-2xl font-bold">Управление заказами</h1>
-    <div class="search-filters">
-      <input type="text" id="searchInput" placeholder="Поиск по заказам..."
+
+    <!-- Форма поиска -->
+    <form th:action="@{/admin/orders}" method="get" class="search-filters">
+      <input type="text"
+             name="searchQuery"
+             placeholder="Поиск по заказам..."
+             th:value="${searchQuery}"
              class="ui input">
-      <select class="ui dropdown" id="statusFilter">
+
+      <select name="status" class="ui dropdown">
         <option value="">Все статусы</option>
-        <option th:each="status : ${T(com.example.sweet_dreams.model.Order.OrderStatus).values()}"
-                th:value="${status}"
-                th:text="${status.description}">
+        <option th:each="orderStatus : ${orderStatuses}"
+                th:value="${orderStatus}"
+                th:text="${orderStatus.description}"
+                th:selected="${orderStatus == selectedStatus}">
         </option>
       </select>
-    </div>
+
+      <button type="submit" class="ui primary button">Поиск</button>
+
+      <!-- Кнопка сброса фильтров -->
+      <a th:href="@{/admin/orders}"
+         class="ui button"
+         th:if="${searchQuery != null or selectedStatus != null}">
+        Сбросить
+      </a>
+    </form>
   </div>
 
-  <div class="ui segment">
+  <!-- Сообщение, если заказы не найдены -->
+  <div class="ui message" th:if="${#lists.isEmpty(orders)}">
+    <p>Заказы не найдены</p>
+  </div>
+
+  <!-- Таблица заказов -->
+  <div class="ui segment" th:if="${not #lists.isEmpty(orders)}">
     <table class="ui celled table">
       <thead>
       <tr class="table-header">
@@ -107,9 +130,15 @@
       </tr>
       </thead>
       <tbody>
-      <tr th:each="order : ${orders}" class="order-row"
-          th:data-order-id="${order.id}">
-        <td th:text="${'#' + order.id}"></td>
+      <tr th:each="order : ${orders}" class="order-row">
+        <td>
+          <!-- Кликабельный ID заказа -->
+          <a th:href="@{/admin/{id}/details(id=${order.id})}"
+             class="ui link"
+             th:text="${'#' + order.id}"
+             style="color: #2185d0; text-decoration: underline;">
+          </a>
+        </td>
         <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
         <td th:text="${order.customerName}"></td>
         <td>
@@ -121,119 +150,43 @@
             th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 2, 'POINT')} + ' UAH'">
         </td>
         <td>
-                            <span class="status-badge"
-                                  th:classappend="${'status-' + order.status}"
-                                  th:text="${order.status.description}">
-                            </span>
+                <span class="status-badge"
+                      th:classappend="${'status-' + order.status}"
+                      th:text="${order.status.description}">
+                </span>
         </td>
         <td>
           <div class="action-buttons">
-            <button class="ui tiny primary button show-details-btn">
+            <!-- Кнопка просмотра деталей -->
+            <a th:href="@{/admin/{id}/details(id=${order.id})}"
+               class="ui tiny primary button">
               Детали
-            </button>
-            <div class="ui tiny buttons">
-              <button class="ui button update-status-btn"
-                      th:if="${order.status != T(com.example.sweet_dreams.model.Order.OrderStatus).COMPLETED &&
-                                                    order.status != T(com.example.sweet_dreams.model.Order.OrderStatus).CANCELLED}">
-                Изменить статус
-              </button>
-              <button class="ui negative button cancel-order-btn"
-                      th:if="${order.status != T(com.example.sweet_dreams.model.Order.OrderStatus).COMPLETED &&
-                                                    order.status != T(com.example.sweet_dreams.model.Order.OrderStatus).CANCELLED}">
-                Отменить
-              </button>
-            </div>
+            </a>
+
+<!--             Кнопки управления статусом -->
+<!--            <div class="ui tiny buttons"-->
+<!--                 th:if="${order.status != T(com.example.sweet_dreams.model.Order.OrderStatus).COMPLETED &&-->
+<!--                                    order.status != T(com.example.sweet_dreams.model.Order.OrderStatus).CANCELLED}">-->
+<!--              <a th:href="@{/admin/{id}/update-status(id=${order.id})}"-->
+<!--                 class="ui button">-->
+<!--                Изменить статус-->
+<!--              </a>-->
+<!--              <form th:action="@{/admin/orders/{id}/cancel(id=${order.id})}"-->
+<!--                    method="post"-->
+<!--                    style="display: inline;">-->
+<!--                <button type="submit"-->
+<!--                        class="ui negative button"-->
+<!--                        onclick="return confirm('Вы уверены, что хотите отменить заказ?')">-->
+<!--                  Отменить-->
+<!--                </button>-->
+<!--              </form>-->
+<!--            </div>-->
           </div>
         </td>
       </tr>
       </tbody>
     </table>
   </div>
-
-  <!-- Модальное окно для деталей заказа -->
-  <div class="ui modal" id="orderDetailsModal">
-    <i class="close icon"></i>
-    <div class="header">
-      Детали заказа <span id="modalOrderId"></span>
-    </div>
-    <div class="content">
-      <div id="orderDetailsContent"></div>
-    </div>
-  </div>
-
-  <!-- Модальное окно для изменения статуса -->
-  <div class="ui modal" id="updateStatusModal">
-    <i class="close icon"></i>
-    <div class="header">Изменить статус заказа</div>
-    <div class="content">
-      <select class="ui dropdown" id="newStatus">
-        <option th:each="status : ${T(com.example.sweet_dreams.model.Order.OrderStatus).values()}"
-                th:value="${status}"
-                th:text="${status.description}">
-        </option>
-      </select>
-    </div>
-    <div class="actions">
-      <div class="ui cancel button">Отмена</div>
-      <div class="ui positive button">Сохранить</div>
-    </div>
-  </div>
 </div>
-
-<script>
-  // Инициализация Semantic UI компонентов
-  $('.ui.dropdown').dropdown();
-
-  // Поиск по таблице
-  $('#searchInput').on('keyup', function() {
-    let value = $(this).val().toLowerCase();
-    $('.order-row').filter(function() {
-      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-    });
-  });
-
-  // Фильтрация по статусу
-  $('#statusFilter').change(function() {
-    let status = $(this).val();
-    if (status) {
-      $('.order-row').hide();
-      $('.status-' + status).closest('tr').show();
-    } else {
-      $('.order-row').show();
-    }
-  });
-
-  // Показать детали заказа
-  $('.show-details-btn').click(function(e) {
-    e.stopPropagation();
-    let orderId = $(this).closest('tr').data('order-id');
-    // Здесь нужно добавить AJAX запрос для получения деталей заказа
-    $('#modalOrderId').text('#' + orderId);
-    $('#orderDetailsModal').modal('show');
-  });
-
-  // Изменение статуса заказа
-  $('.update-status-btn').click(function(e) {
-    e.stopPropagation();
-    let orderId = $(this).closest('tr').data('order-id');
-    $('#updateStatusModal')
-            .modal('setting', {
-              onApprove: function() {
-                let newStatus = $('#newStatus').val();
-                // Здесь нужно добавить AJAX запрос для обновления статуса
-              }
-            })
-            .modal('show');
-  });
-
-  // Отмена заказа
-  $('.cancel-order-btn').click(function(e) {
-    e.stopPropagation();
-    if (confirm('Вы уверены, что хотите отменить заказ?')) {
-      let orderId = $(this).closest('tr').data('order-id');
-      // Здесь нужно добавить AJAX запрос для отмены заказа
-    }
-  });
-</script>
 </body>
 </html>

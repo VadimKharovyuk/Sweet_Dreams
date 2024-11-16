@@ -10,11 +10,17 @@ import com.example.sweet_dreams.repository.OrderRepository;
 import com.example.sweet_dreams.repository.ProductRepository;
 import com.example.sweet_dreams.service.serviceImpl.OrderService;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,10 +68,31 @@ public class OrderServiceImpl implements OrderService {
         return orderItem;
     }
 
+
     private BigDecimal calculateTotal(List<OrderItem> items) {
         return items.stream()
                 .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+
+
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    public static class OrderSummary {
+        private int totalItems;           // Общее количество позиций
+        private int totalUnits;           // Общее количество единиц товаров
+        private BigDecimal subtotal;      // Общая стоимость
+        private BigDecimal averageItemPrice; // Средняя стоимость товара
+    }
+    @Transactional
+    public void updateOrderStatus(Long orderId, Order.OrderStatus newStatus) {
+        Order order = getOrderById(orderId);
+        order.setStatus(newStatus);
+        order.setCreatedAt(LocalDateTime.now());
+        orderRepository.save(order);
     }
 
     @Override
@@ -76,17 +103,41 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<Order> findAll() {
-        return orderRepository.findAll();
+    // Новый метод для получения сводной информации о заказе
+    public OrderSummary calculateOrderSummary(Order order) {
+        List<OrderItem> items = order.getItems();
+
+        // Подсчет количества товаров
+        int totalItems = items.size();
+
+        // Подсчет общей стоимости товаров
+        BigDecimal subtotal = calculateTotal(items);
+
+        // Подсчет общего количества единиц товаров
+        int totalUnits = items.stream()
+                .mapToInt(OrderItem::getQuantity)
+                .sum();
+
+        // Средняя стоимость товара
+        BigDecimal averageItemPrice = totalItems > 0
+                ? subtotal.divide(BigDecimal.valueOf(totalItems), 2, RoundingMode.HALF_UP)
+                : BigDecimal.ZERO;
+
+        return OrderSummary.builder()
+                .totalItems(totalItems)           // Общее количество позиций
+                .totalUnits(totalUnits)          // Общее количество единиц товаров
+                .subtotal(subtotal)              // Общая стоимость
+                .averageItemPrice(averageItemPrice) // Средняя стоимость товара
+                .build();
     }
 
-    @Override
-    public Order updateStatus(Long orderId, Order.OrderStatus status) {
-        Order order = findById(orderId);
-        order.setStatus(status);
-        return orderRepository.save(order);
-    }
+//    @Override
+//    @Transactional(readOnly = true)
+//    public List<Order> findAll() {
+//        return orderRepository.findAll();
+//    }
+
+
 
     @Override
     public void delete(Long id) {
@@ -100,4 +151,25 @@ public class OrderServiceImpl implements OrderService {
                 .map(Product::isAvailable)
                 .orElse(false);
     }
+
+@Override
+public Page<Order> searchOrders(String query, Order.OrderStatus status, Pageable pageable) {
+        String searchQuery = query != null ? query.trim().toLowerCase() : null;
+        Long searchId = null;
+
+        if (searchQuery != null && searchQuery.matches("\\d+")) {
+            try {
+                searchId = Long.parseLong(searchQuery);
+            } catch (NumberFormatException ignored) {}
+        }
+
+        return orderRepository.findBySearchCriteriaAndStatus(searchQuery, searchId, status, pageable);
+    }
+
+    @Override
+    public Order getOrderById(Long id) {
+        return orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Заказ не найден"));
+    }
+
 }

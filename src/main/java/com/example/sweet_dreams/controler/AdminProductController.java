@@ -95,7 +95,6 @@ public class AdminProductController {
     }
 
     // Форма редактирования
-    // Форма редактирования
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
         try {

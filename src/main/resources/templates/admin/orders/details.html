@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Детали заказа</title>
+  <link rel="stylesheet" th:href="@{/css/navigation.css}">
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.css">
+  <style>
+    .order-details-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .status-NEW { background-color: #3B82F6; color: white; }
+    .status-CONFIRMED { background-color: #10B981; color: white; }
+    .status-PREPARING { background-color: #F59E0B; color: white; }
+    .status-READY { background-color: #6366F1; color: white; }
+    .status-DELIVERING { background-color: #8B5CF6; color: white; }
+    .status-COMPLETED { background-color: #059669; color: white; }
+    .status-CANCELLED { background-color: #EF4444; color: white; }
+
+    .order-summary {
+      background-color: #f8fafc;
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="order-details-container">
+  <!-- Заголовок и сообщения -->
+  <div class="ui grid">
+    <div class="left floated eight wide column">
+      <h1>Заказ #<span th:text="${order.id}"></span></h1>
+    </div>
+    <div class="right floated eight wide column right aligned">
+      <a th:href="@{/admin/orders}" class="ui button">Назад к списку</a>
+    </div>
+  </div>
+
+  <!-- Сообщения об успехе/ошибке -->
+  <div th:if="${message}" class="ui positive message" th:text="${message}"></div>
+  <div th:if="${error}" class="ui negative message" th:text="${error}"></div>
+
+  <!-- Основная информация о заказе -->
+  <div class="ui segments">
+    <div class="ui segment">
+      <h3 class="ui header">Информация о заказе</h3>
+      <div class="ui grid">
+        <div class="eight wide column">
+          <p><strong>Дата создания:</strong>
+            <span th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></span>
+          </p>
+          <p><strong>Статус:</strong>
+            <span class="status-badge"
+                  th:classappend="${'status-' + order.status}"
+                  th:text="${order.status.description}"></span>
+          </p>
+<!--          <p th:if="${order.lastModifiedDate}"><strong>Последнее обновление:</strong>-->
+<!--            <span th:text="${#temporals.format(order.lastModifiedDate, 'dd.MM.yyyy HH:mm')}"></span>-->
+<!--          </p>-->
+        </div>
+        <div class="eight wide column">
+          <!-- Форма изменения статуса -->
+          <form th:if="${order.status != T(com.example.sweet_dreams.model.Order.OrderStatus).COMPLETED &&
+                                     order.status != T(com.example.sweet_dreams.model.Order.OrderStatus).CANCELLED}"
+                th:action="@{/admin/{id}/update-status(id=${order.id})}"
+                method="post"
+                class="ui form">
+            <div class="fields">
+              <div class="twelve wide field">
+                <select name="newStatus" class="ui dropdown">
+                  <option value="">Выберите новый статус</option>
+                  <option th:each="status : ${statuses}"
+                          th:value="${status}"
+                          th:text="${status.description}"
+                          th:selected="${status == order.status}"></option>
+                </select>
+              </div>
+              <div class="four wide field">
+                <button type="submit" class="ui primary button">Обновить</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Информация о клиенте -->
+    <div class="ui segment">
+      <h3 class="ui header">Информация о клиенте</h3>
+      <div class="ui two column grid">
+        <div class="column">
+          <p><strong>Имя:</strong> <span th:text="${order.customerName}"></span></p>
+          <p><strong>Email:</strong> <span th:text="${order.customerEmail}"></span></p>
+          <p><strong>Телефон:</strong> <span th:text="${order.customerPhone}"></span></p>
+        </div>
+        <div class="column">
+          <p><strong>Адрес доставки:</strong></p>
+          <p th:text="${order.deliveryAddress}"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Список товаров -->
+    <div class="ui segment">
+      <h3 class="ui header">Товары в заказе</h3>
+      <table class="ui celled table">
+        <thead>
+        <tr>
+          <th>Название</th>
+          <th>Размер</th>
+          <th>Количество</th>
+          <th class="right aligned">Цена</th>
+          <th class="right aligned">Сумма</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${order.items}">
+          <td>
+            <span th:text="${item.product.name}"></span>
+          </td>
+          <td th:text="${item.getProduct().getSize()}"></td>
+          <td th:text="${item.getQuantity()}"></td>
+          <td class="right aligned"
+              th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 2, 'POINT')} + ' UAH'"></td>
+          <td class="right aligned"
+              th:text="${#numbers.formatDecimal(item.price * item.getQuantity(), 0, 'COMMA', 2, 'POINT')} + ' UAH'"></td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+          <th colspan="4" class="right aligned">Всего товаров:</th>
+          <th class="right aligned" th:text="${summary.totalItems}"></th>
+        </tr>
+        <tr>
+          <th colspan="4" class="right aligned">Общее количество:</th>
+          <th class="right aligned" th:text="${summary.totalUnits}"></th>
+        </tr>
+        <tr>
+          <th colspan="4" class="right aligned">Итого:</th>
+          <th class="right aligned"
+              th:text="${#numbers.formatDecimal(summary.subtotal, 0, 'COMMA', 2, 'POINT')} + ' UAH'"></th>
+        </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.js"></script>
+<script>
+  $('.ui.dropdown').dropdown();
+</script>
+</body>
+</html>

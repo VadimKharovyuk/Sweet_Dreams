@@ -3,17 +3,27 @@ package com.example.sweet_dreams.controler;
 import com.example.sweet_dreams.dto.admin.AdminCreateDto;
 import com.example.sweet_dreams.exception.AdminAlreadyExistsException;
 import com.example.sweet_dreams.model.Admin;
+import com.example.sweet_dreams.model.Order;
 import com.example.sweet_dreams.repository.AdminRepository;
+import com.example.sweet_dreams.service.OrderServiceImpl;
 import com.example.sweet_dreams.service.serviceImpl.AdminService;
 import com.example.sweet_dreams.service.serviceImpl.OrderService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 @Controller
@@ -24,6 +34,39 @@ public class AdminController {
     private final AdminService adminService;
     private final AdminRepository adminRepository;
     private final OrderService orderService;
+
+
+    @GetMapping("/{id}/details")
+    public String showOrderDetails(@PathVariable Long id, Model model) {
+        try {
+            Order order = orderService.getOrderById(id);
+
+            // Получаем сводную информацию о заказе
+            OrderServiceImpl.OrderSummary summary = orderService.calculateOrderSummary(order);
+
+            // Добавляем все необходимые атрибуты в модель
+            model.addAttribute("order", order);
+            model.addAttribute("statuses", Order.OrderStatus.values());
+            model.addAttribute("summary", summary);
+
+            return "admin/orders/details";
+        } catch (Exception e) {
+            return "redirect:/admin/orders?error=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
+        }
+    }
+
+    @PostMapping("/{id}/update-status")
+    public String updateOrderStatus(@PathVariable Long id,
+                                    @RequestParam Order.OrderStatus newStatus,
+                                    RedirectAttributes redirectAttributes) {
+        try {
+            orderService.updateOrderStatus(id, newStatus);
+            redirectAttributes.addFlashAttribute("message", "Статус заказа успешно обновлен");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/" + id + "/details";
+    }
 
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
@@ -36,12 +79,22 @@ public class AdminController {
         return "admin/dashboard";
     }
 
-@GetMapping("/orders")
-public String orders(Model model) {
-    model.addAttribute("orders", orderService.findAll());
-    return "admin/orders-list";
-}
+    @GetMapping("/orders")
+    public String orders(
+            @RequestParam(required = false) String searchQuery,
+            @RequestParam(required = false) Order.OrderStatus status,
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+            Model model) {
 
+        Page<Order> orderPage = orderService.searchOrders(searchQuery, status, pageable);
+
+        model.addAttribute("orders", orderPage);
+        model.addAttribute("searchQuery", searchQuery);
+        model.addAttribute("selectedStatus", status);
+        model.addAttribute("orderStatuses", Order.OrderStatus.values());
+
+        return "admin/orders-list";
+    }
 
 
 
