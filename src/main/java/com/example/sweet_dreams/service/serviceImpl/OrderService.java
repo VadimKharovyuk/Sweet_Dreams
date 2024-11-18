@@ -1,6 +1,7 @@
 package com.example.sweet_dreams.service.serviceImpl;
 
 import com.example.sweet_dreams.dto.order.OrderDTO;
+import com.example.sweet_dreams.dto.order.OrderDetailsDTO;
 import com.example.sweet_dreams.model.Order;
 import com.example.sweet_dreams.service.OrderServiceImpl;
 import org.springframework.data.domain.Page;
@@ -10,12 +11,11 @@ import java.util.List;
 
 
 public interface OrderService {
+
+    OrderServiceImpl.OrderSummary calculateOrderSummary(Order order);
     Order create(OrderDTO orderDTO);
 
     Order findById(Long id);
-
-    //    List<Order> findAll();
-    OrderServiceImpl.OrderSummary calculateOrderSummary(Order order);
 
     void updateOrderStatus(Long orderId, Order.OrderStatus newStatus);
 
@@ -27,5 +27,7 @@ public interface OrderService {
 
     Order getOrderById(Long id);
 
+
+    OrderDetailsDTO getOrderDetails(Long orderId);
 
 }

@@ -22,6 +22,16 @@ public class Order {
     private String deliveryAddress;
     private String privateMessage;
 
+
+    @Column(name = "coupon_code")
+    private String couponCode;
+
+    @Column(name = "discount_amount")
+    private BigDecimal discount;
+
+    @Column(name = "subtotal_amount")
+    private BigDecimal subtotalAmount;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<OrderItem> items;
 

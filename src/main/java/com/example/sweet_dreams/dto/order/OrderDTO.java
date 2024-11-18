@@ -46,4 +46,6 @@ public class OrderDTO {
     @Column(name = "private_message", length = 1000)
     private String privateMessage;
 
+    private String couponCode;
+
 }

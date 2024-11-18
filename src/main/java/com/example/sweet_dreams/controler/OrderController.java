@@ -1,10 +1,13 @@
 package com.example.sweet_dreams.controler;
 
+import com.example.sweet_dreams.dto.discount.DiscountResponseDto;
 import com.example.sweet_dreams.dto.order.CartItem;
 import com.example.sweet_dreams.dto.order.OrderDTO;
+import com.example.sweet_dreams.dto.order.OrderDetailsDTO;
 import com.example.sweet_dreams.dto.order.OrderItemDTO;
 import com.example.sweet_dreams.dto.product.ProductDto;
 import com.example.sweet_dreams.model.Order;
+import com.example.sweet_dreams.service.serviceImpl.DiscountService;
 import com.example.sweet_dreams.service.serviceImpl.OrderService;
 import com.example.sweet_dreams.service.serviceImpl.ProductService;
 import jakarta.servlet.http.HttpSession;
@@ -29,49 +32,30 @@ public class OrderController {
     private final ProductService productService;
     private static final String CART_SESSION_KEY = "cart";
     private final OrderService orderService;
+    private final DiscountService discountService;
 
 
     // Показать страницу оформления заказа
+
     @GetMapping("/checkout")
     public String showCheckoutForm(HttpSession session, Model model) {
-        // Получаем корзину из сессии
-        @SuppressWarnings("unchecked")
-        List<CartItem> cart = (List<CartItem>) session.getAttribute(CART_SESSION_KEY);
+        List<CartItem> cart = getCart(session);
 
-        // Логируем для отладки
-        log.debug("Retrieved cart from session: {}", cart);
-
-        // Если корзина null, создаем пустую
-        if (cart == null) {
-            cart = new ArrayList<>();
-            session.setAttribute(CART_SESSION_KEY, cart);
-        }
-
-        // Проверка на пустую корзину
         if (cart.isEmpty()) {
             return "redirect:/cart?error=empty";
         }
 
-        // Проверяем доступность всех товаров
-        if (!areAllProductsAvailable(cart)) {
-            return "redirect:/cart?error=unavailable";
-        }
-
-        // Если форма ещё не заполнялась, создаем новый DTO
         if (!model.containsAttribute("orderDTO")) {
             model.addAttribute("orderDTO", new OrderDTO());
         }
 
-        BigDecimal total = calculateTotal(cart);
+        BigDecimal subtotal = calculateTotal(cart);
         model.addAttribute("cartItems", cart);
-        model.addAttribute("total", total);
-
-        // Логируем данные, передаваемые в представление
-        log.debug("Sending to view - cartItems: {}, total: {}", cart, total);
+        model.addAttribute("subtotal", subtotal);
+        model.addAttribute("total", subtotal);
 
         return "orders/checkout";
     }
-
 
     @PostMapping("/checkout")
     public String processCheckout(@Valid @ModelAttribute OrderDTO orderDTO,
@@ -86,13 +70,11 @@ public class OrderController {
         }
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("cartItems", cart);
-            model.addAttribute("total", calculateTotal(cart));
-            return "orders/checkout";
+            return showCheckoutForm(session, model);
         }
 
         try {
-            // Преобразуем CartItem в OrderItemDTO
+            // Подготавливаем items для заказа
             List<OrderItemDTO> orderItems = cart.stream()
                     .map(cartItem -> OrderItemDTO.builder()
                             .productId(cartItem.getProductId())
@@ -102,19 +84,58 @@ public class OrderController {
                             .build())
                     .collect(Collectors.toList());
 
-            // Устанавливаем преобразованные items в DTO заказа
             orderDTO.setItems(orderItems);
 
+            // Рассчитываем финальную цену
+            BigDecimal finalPrice;
+            String couponCode = orderDTO.getCouponCode();
+
+            if (couponCode != null && !couponCode.trim().isEmpty()) {
+                try {
+                    // Проверяем валидность купона
+                    if (discountService.isValidCoupon(couponCode, calculateTotal(cart))) {
+                        finalPrice = discountService.calculateFinalPrice(cart, couponCode);
+                        log.info("Applied coupon: {}, final price: {}", couponCode, finalPrice);
+                    } else {
+                        // Если купон невалиден, используем обычную цену
+                        finalPrice = calculateTotal(cart);
+                        log.warn("Invalid coupon: {}, using original price: {}", couponCode, finalPrice);
+                        // Очищаем невалидный купон
+                        orderDTO.setCouponCode(null);
+                    }
+                } catch (Exception e) {
+                    // В случае ошибки с купоном используем обычную цену
+                    finalPrice = calculateTotal(cart);
+                    log.error("Error processing coupon: {}", couponCode, e);
+                    orderDTO.setCouponCode(null);
+                }
+            } else {
+                // Если купона нет, используем обычную цену
+                finalPrice = calculateTotal(cart);
+                log.info("No coupon provided, using original price: {}", finalPrice);
+            }
 
             // Создаем заказ
             Order order = orderService.create(orderDTO);
 
-            // Очищаем корзину после успешного оформления
+            // Увеличиваем счетчик использований купона только если он был успешно применен
+            if (order.getCouponCode() != null) {
+                try {
+                    DiscountResponseDto discount = discountService.findByCode(order.getCouponCode());
+                    discountService.incrementUsageCount(discount.getId());
+                    log.info("Incremented usage count for coupon: {}", order.getCouponCode());
+                } catch (Exception e) {
+                    log.error("Error incrementing coupon usage count", e);
+                    // Не прерываем процесс создания заказа из-за ошибки с купоном
+                }
+            }
+
+            // Очищаем корзину
             session.removeAttribute(CART_SESSION_KEY);
 
             return "redirect:/orders/confirmation/" + order.getId();
-
         } catch (Exception e) {
+            log.error("Error processing checkout", e);
             redirectAttributes.addFlashAttribute("error",
                     "Произошла ошибка при оформлении заказа. Пожалуйста, попробуйте снова.");
             redirectAttributes.addFlashAttribute("orderDTO", orderDTO);
@@ -122,22 +143,43 @@ public class OrderController {
         }
     }
 
-    // Страница подтверждения заказа
-    @GetMapping("/confirmation/{orderId}")
-    public String showOrderConfirmation(@PathVariable Long orderId, Model model) {
-        try {
-            Order order = orderService.findById(orderId);
-            if (order == null) {
-                return "redirect:/orders?error=orderNotFound";
-            }
-
-            model.addAttribute("order", order);
-            return "orders/confirmation";
-        } catch (Exception e) {
-            log.error("Error showing order confirmation for orderId: " + orderId, e);
-            return "redirect:/orders?error=orderError";
-        }
+    // Вспомогательные методы
+    private List<CartItem> getCart(HttpSession session) {
+        @SuppressWarnings("unchecked")
+        List<CartItem> cart = (List<CartItem>) session.getAttribute(CART_SESSION_KEY);
+        return cart != null ? cart : new ArrayList<>();
     }
+
+    private BigDecimal calculateTotal(List<CartItem> cart) {
+        return cart.stream()
+                .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+@GetMapping("/confirmation/{orderId}")
+public String showOrderConfirmation(@PathVariable Long orderId, Model model) {
+    try {
+        Order order = orderService.findById(orderId);
+        if (order == null) {
+            return "redirect:/orders?error=orderNotFound";
+        }
+
+        OrderDetailsDTO orderDetails = OrderDetailsDTO.builder()
+                .order(order)
+                .subtotal(order.getSubtotalAmount())
+                .discount(order.getDiscount())
+                .total(order.getTotalAmount())
+                .appliedCouponCode(order.getCouponCode())
+                .build();
+
+        model.addAttribute("orderDetails", orderDetails);
+        model.addAttribute("order", order);
+
+        return "orders/confirmation";
+    } catch (Exception e) {
+        log.error("Error showing order confirmation for orderId: " + orderId, e);
+        return "redirect:/orders?error=orderError";
+    }
+}
 
     // Метод для обработки ошибок
     @ExceptionHandler(Exception.class)
@@ -255,18 +297,4 @@ public class OrderController {
     }
 
 
-    private List<CartItem> getCart(HttpSession session) {
-        List<CartItem> cart = (List<CartItem>) session.getAttribute(CART_SESSION_KEY);
-        if (cart == null) {
-            cart = new ArrayList<>();
-            session.setAttribute(CART_SESSION_KEY, cart);
-        }
-        return cart;
-    }
-
-    private BigDecimal calculateTotal(List<CartItem> cart) {
-        return cart.stream()
-                .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
 }

@@ -162,11 +162,13 @@
                     </ul>
                 </div>
 
+                <!-- Скрытое поле для купона -->
+                <input type="hidden" th:field="*{couponCode}" id="couponCodeInput">
+
+                <!-- Остальные поля формы остаются без изменений -->
                 <div class="field required">
                     <label>Имя</label>
-                    <input type="text"
-                           th:field="*{customerName}"
-                           placeholder="Введите ваше имя">
+                    <input type="text" th:field="*{customerName}" placeholder="Введите ваше имя">
                     <div class="ui pointing red basic label"
                          th:if="${#fields.hasErrors('customerName')}"
                          th:errors="*{customerName}">
@@ -175,9 +177,7 @@
 
                 <div class="field required">
                     <label>Email</label>
-                    <input type="email"
-                           th:field="*{customerEmail}"
-                           placeholder="example@email.com">
+                    <input type="email" th:field="*{customerEmail}" placeholder="example@email.com">
                     <div class="ui pointing red basic label"
                          th:if="${#fields.hasErrors('customerEmail')}"
                          th:errors="*{customerEmail}">
@@ -186,9 +186,7 @@
 
                 <div class="field required">
                     <label>Телефон</label>
-                    <input type="tel"
-                           th:field="*{customerPhone}"
-                           placeholder="+380123456789">
+                    <input type="tel" th:field="*{customerPhone}" placeholder="+380123456789">
                     <div class="ui pointing red basic label"
                          th:if="${#fields.hasErrors('customerPhone')}"
                          th:errors="*{customerPhone}">
@@ -205,6 +203,7 @@
                          th:errors="*{deliveryAddress}">
                     </div>
                 </div>
+
                 <div class="field">
                     <label>Побажання </label>
                     <textarea th:field="*{privateMessage}"
@@ -215,6 +214,7 @@
                          th:errors="*{privateMessage}">
                     </div>
                 </div>
+
                 <button type="submit" class="ui primary button">
                     Подтвердить заказ
                 </button>
@@ -235,16 +235,101 @@
                 </div>
             </div>
 
+            <!-- Секция купона -->
+            <div class="coupon-section">
+                <div class="ui action input fluid">
+                    <input type="text" id="couponCode" placeholder="Введите код купона">
+                    <button class="ui button" id="applyCouponBtn">Применить</button>
+                </div>
+                <div id="couponMessage"></div>
+            </div>
+
+            <!-- Итоговая сумма -->
             <div class="order-total">
-                <span class="total-label">Итого:</span>
-                <span class="total-amount"
-                      th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 2, 'POINT')} + ' UAH'">
+                <div class="subtotal">
+                    <span>Сумма:</span>
+                    <span id="subtotalAmount"
+                          th:text="${#numbers.formatDecimal(subtotal, 0, 'COMMA', 2, 'POINT')} + ' UAH'">
                     </span>
+                </div>
+
+                <!-- Скидка -->
+                <div class="discount" id="discountRow" style="display: none;">
+                    <span>Скидка:</span>
+                    <span id="discountAmount"></span>
+                </div>
+
+                <div class="total font-bold">
+                    <span class="total-label">Итого к оплате:</span>
+                    <span class="total-amount" id="totalAmount"
+                          th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 2, 'POINT')} + ' UAH'">
+                    </span>
+                </div>
             </div>
         </div>
     </div>
-
 </div>
+
 <div th:replace="~{fragments/footer :: footer}"></div>
+
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        const applyCouponBtn = document.getElementById('applyCouponBtn');
+        const couponInput = document.getElementById('couponCode');
+        const couponMessage = document.getElementById('couponMessage');
+        const couponCodeInput = document.getElementById('couponCodeInput');
+
+        applyCouponBtn.addEventListener('click', function() {
+            const code = couponInput.value.trim();
+            if (!code) {
+                showMessage('error', 'Введите код купона');
+                return;
+            }
+
+            fetch('/api/orders/apply-coupon?code=' + encodeURIComponent(code), {
+                method: 'POST'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        showMessage('error', data.error);
+                        couponCodeInput.value = '';
+                    } else {
+                        showMessage('success', data.message);
+                        updatePrices(data);
+                        couponCodeInput.value = code;
+                    }
+                })
+                .catch(error => {
+                    showMessage('error', 'Произошла ошибка при применении купона');
+                });
+        });
+
+        function showMessage(type, message) {
+            couponMessage.innerHTML = `<div class="ui ${type} message">${message}</div>`;
+        }
+
+        function updatePrices(data) {
+            document.getElementById('subtotalAmount').textContent = formatPrice(data.subtotal);
+
+            const discountRow = document.getElementById('discountRow');
+            if (data.discount > 0) {
+                document.getElementById('discountAmount').textContent = '-' + formatPrice(data.discount);
+                discountRow.style.display = 'flex';
+            } else {
+                discountRow.style.display = 'none';
+            }
+
+            document.getElementById('totalAmount').textContent = formatPrice(data.total);
+        }
+
+        function formatPrice(price) {
+            return new Intl.NumberFormat('uk-UA', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(price) + ' UAH';
+        }
+    });
+</script>
 </body>
 </html>

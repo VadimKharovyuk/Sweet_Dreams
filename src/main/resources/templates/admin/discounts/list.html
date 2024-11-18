@@ -1,0 +1,152 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--  <meta charset="UTF-8">-->
+<!--  <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--  <title>Список скидок</title>-->
+<!--  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">-->
+<!--</head>-->
+<!--<body>-->
+<!--<div class="container mt-4">-->
+<!--  <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">-->
+<!--    <div class="container-fluid">-->
+<!--      <span class="navbar-brand">Sweet Dreams</span>-->
+<!--      <div class="navbar-nav">-->
+<!--        <a class="nav-link" th:href="@{/admin/products}">Товары</a>-->
+<!--        <a class="nav-link" th:href="@{/admin/orders}">Заказы</a>-->
+<!--        <a class="nav-link" th:href="@{/admin/discounts}">Скидки</a>-->
+<!--        <a class="nav-link" th:href="@{/logout}">Выйти</a>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </nav>-->
+
+<!--  <h2>Управление скидками</h2>-->
+
+<!--  <div th:if="${success}" class="alert alert-success" role="alert">-->
+<!--    <span th:text="${success}"></span>-->
+<!--  </div>-->
+
+<!--  <div th:if="${error}" class="alert alert-danger" role="alert">-->
+<!--    <span th:text="${error}"></span>-->
+<!--  </div>-->
+
+<!--  <div class="mb-3">-->
+<!--    <a href="/admin/discounts/create" class="btn btn-primary">Создать скидку</a>-->
+<!--  </div>-->
+
+<!--  <table class="table">-->
+<!--    <thead>-->
+<!--    <tr>-->
+<!--      <th>Название</th>-->
+<!--      <th>Тип</th>-->
+<!--      <th>Значение</th>-->
+<!--      <th>Код</th>-->
+<!--      <th>Период действия</th>-->
+<!--      <th>Статус</th>-->
+<!--      <th>Действия</th>-->
+<!--    </tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    <tr th:each="discount : ${discounts}">-->
+<!--      <td th:text="${discount.name}"></td>-->
+<!--      <td th:text="${discount.type.description}"></td>-->
+<!--      <td th:text="${discount.formattedDiscount}"></td>-->
+<!--      <td th:text="${discount.code}"></td>-->
+<!--      <td>-->
+<!--        <span th:text="${#temporals.format(discount.validFrom, 'dd.MM.yyyy')}"></span>-->
+<!--        - -->
+<!--        <span th:text="${#temporals.format(discount.validUntil, 'dd.MM.yyyy')}"></span>-->
+<!--      </td>-->
+<!--      <td>-->
+<!--        <span th:if="${discount.active && !discount.expired}">Активна</span>-->
+<!--        <span th:if="${!discount.active}">Неактивна</span>-->
+<!--        <span th:if="${discount.expired}">Истекла</span>-->
+<!--      </td>-->
+<!--      <td>-->
+<!--        <a th:href="@{/admin/discounts/edit/{id}(id=${discount.id})}" class="btn btn-sm btn-primary">Изменить</a>-->
+<!--        <button type="button"-->
+<!--                class="btn btn-sm btn-danger"-->
+<!--                th:onclick="'if(confirm(\'Удалить скидку?\')) document.getElementById(\'delete-form-\' + ' + ${discount.id} + ').submit();'">-->
+<!--          Удалить-->
+<!--        </button>-->
+<!--        <form th:id="'delete-form-' + ${discount.id}"-->
+<!--              th:action="@{/admin/discounts/delete/{id}(id=${discount.id})}"-->
+<!--              method="post"-->
+<!--              style="display: none;"></form>-->
+<!--      </td>-->
+<!--    </tr>-->
+<!--    </tbody>-->
+<!--  </table>-->
+<!--</div>-->
+<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>-->
+<!--</body>-->
+<!--</html>-->
+
+
+
+<!-- templates/admin/discounts/list.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Список скидок</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-3">
+  <h1>Управление скидками</h1>
+
+  <!-- Сообщения -->
+  <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+  <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+  <!-- Кнопки -->
+  <div class="mb-3">
+    <a href="/admin/discounts/create" class="btn btn-primary">Создать скидку</a>
+  </div>
+
+  <!-- Таблица -->
+  <table class="table">
+    <thead>
+    <tr>
+      <th>Название</th>
+      <th>Тип</th>
+      <th>Значение</th>
+      <th>Код</th>
+      <th>Период действия</th>
+      <th>Статус</th>
+      <th>Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="discount : ${discounts}">
+      <td th:text="${discount.name}"></td>
+      <td th:text="${discount.type.description}"></td>
+      <td th:text="${discount.formattedDiscount}"></td>
+      <td th:text="${discount.code}"></td>
+      <td>
+        <span th:text="${#temporals.format(discount.validFrom, 'dd.MM.yyyy')}"></span>
+        -
+        <span th:text="${#temporals.format(discount.validUntil, 'dd.MM.yyyy')}"></span>
+      </td>
+      <td>
+        <span th:if="${discount.active && !discount.expired}">Активна</span>
+        <span th:if="${!discount.active}">Неактивна</span>
+        <span th:if="${discount.expired}">Истекла</span>
+      </td>
+      <td>
+        <a th:href="@{/admin/discounts/edit/{id}(id=${discount.id})}" class="btn btn-sm btn-primary">Изменить</a>
+        <form th:action="@{/admin/discounts/delete/{id}(id=${discount.id})}"
+              method="post"
+              style="display: inline-block;"
+              onsubmit="return confirm('Вы уверены, что хотите удалить эту скидку?');">
+          <button type="submit" class="btn btn-sm btn-danger">
+            <i class="fas fa-trash"></i> Удалить
+          </button>
+        </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

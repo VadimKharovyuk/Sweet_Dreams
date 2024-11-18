@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Создание скидки</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
+</head>
+<body>
+<div th:replace="~{fragments/navigation :: navigation}"></div><br><br>
+<div class="container mt-3">
+    <h1>Создание скидки</h1>
+
+    <!-- Сообщения об ошибках -->
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <form th:action="@{/admin/discounts/create}"
+          th:object="${discount}"
+          method="post">
+
+        <!-- Тип скидки -->
+        <div class="mb-3">
+            <label for="type" class="form-label">Тип скидки*</label>
+            <select class="form-select"
+                    id="type"
+                    th:field="*{type}"
+                    required>
+                <option value="">Выберите тип скидки</option>
+                <option th:each="discountType : ${T(com.example.sweet_dreams.model.Discount.DiscountType).values()}"
+                        th:value="${discountType}"
+                        th:text="${discountType.description}">Тип скидки</option>
+            </select>
+            <div class="text-danger" th:if="${#fields.hasErrors('type')}"
+                 th:errors="*{type}"></div>
+        </div>
+
+        <!-- Название -->
+        <div class="mb-3">
+            <label for="name" class="form-label">Название*</label>
+            <input type="text"
+                   class="form-control"
+                   th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''"
+                   id="name"
+                   th:field="*{name}"
+                   required>
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}"
+                 th:errors="*{name}"></div>
+        </div>
+
+        <!-- Описание -->
+        <div class="mb-3">
+            <label for="description" class="form-label">Описание</label>
+            <textarea class="form-control"
+                      id="description"
+                      th:field="*{description}"
+                      rows="3"></textarea>
+        </div>
+
+        <!-- Код купона -->
+        <div class="mb-3" id="codeGroup" style="display: none;">
+            <label for="code" class="form-label">Код купона*</label>
+            <input type="text"
+                   class="form-control"
+                   th:classappend="${#fields.hasErrors('code')} ? 'is-invalid' : ''"
+                   id="code"
+                   th:field="*{code}">
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('code')}"
+                 th:errors="*{code}"></div>
+        </div>
+
+        <!-- Значение скидки -->
+        <div class="mb-3">
+            <label for="value" class="form-label">Значение скидки*</label>
+            <div class="input-group">
+                <input type="number"
+                       step="0.01"
+                       class="form-control"
+                       th:classappend="${#fields.hasErrors('value')} ? 'is-invalid' : ''"
+                       id="value"
+                       th:field="*{value}"
+                       required
+                       min="0">
+                <span class="input-group-text" id="valueType">%</span>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('value')}"
+                     th:errors="*{value}"></div>
+            </div>
+        </div>
+
+        <!-- Период действия -->
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="validFrom" class="form-label">Начало действия*</label>
+                <input type="datetime-local"
+                       class="form-control"
+                       th:classappend="${#fields.hasErrors('validFrom')} ? 'is-invalid' : ''"
+                       id="validFrom"
+                       th:field="*{validFrom}"
+                       required>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('validFrom')}"
+                     th:errors="*{validFrom}"></div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="validUntil" class="form-label">Окончание действия*</label>
+                <input type="datetime-local"
+                       class="form-control"
+                       th:classappend="${#fields.hasErrors('validUntil')} ? 'is-invalid' : ''"
+                       id="validUntil"
+                       th:field="*{validUntil}"
+                       required>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('validUntil')}"
+                     th:errors="*{validUntil}"></div>
+            </div>
+        </div>
+
+        <!-- Дополнительные параметры -->
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="maxUsageCount" class="form-label">Макс. количество использований</label>
+                <input type="number"
+                       class="form-control"
+                       th:classappend="${#fields.hasErrors('maxUsageCount')} ? 'is-invalid' : ''"
+                       id="maxUsageCount"
+                       th:field="*{maxUsageCount}"
+                       min="1">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('maxUsageCount')}"
+                     th:errors="*{maxUsageCount}"></div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="minimumOrderAmount" class="form-label">Мин. сумма заказа</label>
+                <input type="number"
+                       step="0.01"
+                       class="form-control"
+                       th:classappend="${#fields.hasErrors('minimumOrderAmount')} ? 'is-invalid' : ''"
+                       id="minimumOrderAmount"
+                       th:field="*{minimumOrderAmount}"
+                       min="0">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('minimumOrderAmount')}"
+                     th:errors="*{minimumOrderAmount}"></div>
+            </div>
+        </div>
+
+        <!-- Кнопки -->
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+            <a th:href="@{/admin/discounts}" class="btn btn-secondary">Отмена</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const typeSelect = document.getElementById('type');
+        const codeGroup = document.getElementById('codeGroup');
+        const valueType = document.getElementById('valueType');
+        const valueInput = document.getElementById('value');
+        const validFromInput = document.getElementById('validFrom');
+        const validUntilInput = document.getElementById('validUntil');
+
+        // Установка минимальной даты
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        const minDateTime = now.toISOString().slice(0, 16);
+        validFromInput.min = minDateTime;
+        validUntilInput.min = minDateTime;
+
+        function updateForm() {
+            const selectedType = typeSelect.value;
+            const isPercentage = selectedType.includes('PERCENTAGE');
+            const isCoupon = selectedType.includes('COUPON');
+
+            codeGroup.style.display = isCoupon ? 'block' : 'none';
+            valueType.textContent = isPercentage ? '%' : 'грн';
+
+            if (isPercentage) {
+                valueInput.max = "100";
+            } else {
+                valueInput.removeAttribute('max');
+            }
+        }
+
+        validFromInput.addEventListener('change', function() {
+            validUntilInput.min = validFromInput.value;
+            if (validUntilInput.value && validUntilInput.value < validFromInput.value) {
+                validUntilInput.value = validFromInput.value;
+            }
+        });
+
+        updateForm();
+        typeSelect.addEventListener('change', updateForm);
+    });
+</script>
+</body>
+</html>

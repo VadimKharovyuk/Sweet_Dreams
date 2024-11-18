@@ -122,6 +122,28 @@
                 padding: 1rem;
             }
         }
+        .total-section {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 2px solid #e5e7eb;
+        }
+
+        .total-section .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem 0;
+        }
+
+        .total-section .total {
+            border-top: 1px solid #e5e7eb;
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+
+        .text-green-600 {
+            color: #059669;
+        }
     </style>
 </head>
 <body>
@@ -196,11 +218,46 @@
             </div>
 
             <div class="total-section">
+                <!-- Подытог -->
                 <div class="detail-row">
-                    <span class="text-xl font-semibold">Итого:</span>
-                    <span class="text-xl font-bold"
-                          th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 2, 'POINT')} + ' UAH'">
-                        </span>
+                    <span class="text-gray-600">Сумма:</span>
+                    <span th:text="${#numbers.formatDecimal(orderDetails.subtotal, 0, 'COMMA', 2, 'POINT')} + ' UAH'"></span>
+                </div>
+
+                <!-- В начале шаблона добавим константу для ZERO -->
+                <div th:with="ZERO=${T(java.math.BigDecimal).ZERO}">
+                    <!-- Остальной контент -->
+
+                    <!-- Общая информация о заказе -->
+                    <div class="total-section">
+                        <!-- Подытог -->
+                        <div class="detail-row">
+                            <span class="text-gray-600">Сумма:</span>
+                            <span th:text="${#numbers.formatDecimal(orderDetails.subtotal, 0, 'COMMA', 2, 'POINT')} + ' UAH'"></span>
+                        </div>
+
+                        <!-- Скидка (показываем только если есть) -->
+                        <div class="detail-row"
+                             th:if="${orderDetails.discount != null && orderDetails.discount.compareTo(ZERO) > 0}">
+            <span class="text-gray-600">
+                Скидка
+                <span th:if="${orderDetails.appliedCouponCode != null}"
+                      th:text="'(Купон: ' + ${orderDetails.appliedCouponCode} + ')'">
+                </span>:
+            </span>
+                            <span class="text-green-600"
+                                  th:text="'-' + ${#numbers.formatDecimal(orderDetails.discount, 0, 'COMMA', 2, 'POINT')} + ' UAH'">
+            </span>
+                        </div>
+
+                        <!-- Итого -->
+                        <div class="detail-row total">
+                            <span class="text-xl font-semibold">Итого к оплате:</span>
+                            <span class="text-xl font-bold"
+                                  th:text="${#numbers.formatDecimal(orderDetails.total, 0, 'COMMA', 2, 'POINT')} + ' UAH'">
+            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
